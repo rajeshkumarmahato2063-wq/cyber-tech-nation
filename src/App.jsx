@@ -12,16 +12,21 @@ import Register from './components/Register';
 import FAQ from './components/FAQ';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
+import BackgroundDecorations from './components/ui/BackgroundDecorations';
 
 /**
- * Main Application Shell for ZAYATHON Website
- * Renders sections in designated order for Phase 1 project setup
+ * ZAYATHON Application Shell
+ * Configured with Phase 2 Cyber-Tech Design System
  */
 function App() {
   return (
-    <div className="min-h-screen bg-[#050816] text-white flex flex-col font-sans">
+    <div className="relative min-h-screen bg-[#050816] text-[#F8FAFC] flex flex-col font-sans overflow-hidden selection:bg-[#00E5FF] selection:text-[#050816]">
+      {/* Reusable Cyber Ambient Background Lighting */}
+      <BackgroundDecorations />
+
+      {/* Main UI Layout */}
       <Navbar />
-      <main className="flex-1">
+      <main className="flex-1 z-10">
         <Hero />
         <About />
         <Stats />
