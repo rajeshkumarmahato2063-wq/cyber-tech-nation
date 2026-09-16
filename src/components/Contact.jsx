@@ -1,17 +1,14 @@
 import React from 'react';
-import { Mail } from 'lucide-react';
+import SectionTitle from './ui/SectionTitle';
 
-/**
- * Contact Component Placeholder
- */
 const Contact = () => {
   return (
-    <section className="py-16 px-6 border-b border-white/5 flex flex-col items-center text-center bg-white/[0.01]">
-      <div className="flex items-center gap-2 text-2xl font-bold text-sky-400 mb-4">
-        <Mail className="w-6 h-6" />
-        <h2>Contact Us</h2>
-      </div>
-      <p className="text-gray-400 max-w-xl">Contact Section Placeholder</p>
+    <section id="contact" className="section-container relative z-10">
+      <SectionTitle 
+        badge="Get In Touch"
+        title="CONTACT OUR TEAM"
+        subtitle="Have questions regarding team formation, venue, or sponsorship? Reach out to us."
+      />
     </section>
   );
 };

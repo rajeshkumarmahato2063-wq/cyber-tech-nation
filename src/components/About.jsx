@@ -4,11 +4,11 @@ import GlassCard from './ui/GlassCard';
 import { Cpu, Globe, Shield } from 'lucide-react';
 
 /**
- * About Component utilizing Phase 2 Design System
+ * About Component
  */
 const About = () => {
   return (
-    <section className="section-container relative z-10">
+    <section id="about" className="section-container relative z-10">
       <SectionTitle 
         badge="About The Event"
         title="WHERE IDEAS MEET IMPACT"

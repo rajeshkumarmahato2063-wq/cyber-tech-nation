@@ -1,17 +1,14 @@
 import React from 'react';
-import { UserPlus } from 'lucide-react';
+import SectionTitle from './ui/SectionTitle';
 
-/**
- * Register Component Placeholder
- */
 const Register = () => {
   return (
-    <section className="py-16 px-6 border-b border-white/5 flex flex-col items-center text-center bg-white/[0.01]">
-      <div className="flex items-center gap-2 text-2xl font-bold text-emerald-400 mb-4">
-        <UserPlus className="w-6 h-6" />
-        <h2>Register Now</h2>
-      </div>
-      <p className="text-gray-400 max-w-xl">Register Section Placeholder</p>
+    <section id="register" className="section-container relative z-10">
+      <SectionTitle 
+        badge="Join The Movement"
+        title="CLAIM YOUR SPOT"
+        subtitle="Registration is 100% free. Secure your slot before registrations close."
+      />
     </section>
   );
 };
