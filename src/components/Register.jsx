@@ -20,6 +20,7 @@ import {
 import SectionTitle from './ui/SectionTitle';
 import RegistrationStepper from './RegistrationStepper';
 import TeamMemberForm from './TeamMemberForm';
+import SuccessModal from './SuccessModal';
 import { teamService } from '../services/team';
 import { registrationService } from '../services/registration';
 
