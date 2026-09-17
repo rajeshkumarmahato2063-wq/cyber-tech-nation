@@ -1,51 +1,22 @@
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
+import { uploadService } from './upload';
 
 /**
  * Registration Service - Handles hackathon registrations and file uploads
  */
 export const registrationService = {
   /**
-   * Upload proposal PDF document to Supabase Storage
+   * Upload proposal PDF document
    */
   async uploadProposalFile(file, userId) {
-    if (!isSupabaseConfigured() || !file) return null;
-    const fileExt = file.name.split('.').pop();
-    const fileName = `${userId || 'anon'}_proposal_${Date.now()}.${fileExt}`;
-    const filePath = `proposals/${fileName}`;
-
-    const { error: uploadErr } = await supabase.storage
-      .from('proposals')
-      .upload(filePath, file, { upsert: true });
-
-    if (uploadErr) throw uploadErr;
-
-    const { data } = supabase.storage
-      .from('proposals')
-      .getPublicUrl(filePath);
-
-    return data.publicUrl;
+    return await uploadService.uploadProposal(file, userId);
   },
 
   /**
-   * Upload presentation PPT file to Supabase Storage
+   * Upload presentation PPT PDF document
    */
   async uploadPptFile(file, userId) {
-    if (!isSupabaseConfigured() || !file) return null;
-    const fileExt = file.name.split('.').pop();
-    const fileName = `${userId || 'anon'}_ppt_${Date.now()}.${fileExt}`;
-    const filePath = `ppts/${fileName}`;
-
-    const { error: uploadErr } = await supabase.storage
-      .from('ppts')
-      .upload(filePath, file, { upsert: true });
-
-    if (uploadErr) throw uploadErr;
-
-    const { data } = supabase.storage
-      .from('ppts')
-      .getPublicUrl(filePath);
-
-    return data.publicUrl;
+    return await uploadService.uploadPpt(file, userId);
   },
 
   /**
@@ -78,13 +49,13 @@ export const registrationService = {
     let pptUrl = null;
 
     if (proposalFile && typeof proposalFile !== 'string') {
-      proposalUrl = await this.uploadProposalFile(proposalFile, userId);
+      proposalUrl = await uploadService.uploadProposal(proposalFile, userId || 'anon');
     } else if (typeof proposalFile === 'string') {
       proposalUrl = proposalFile;
     }
 
     if (pptFile && typeof pptFile !== 'string') {
-      pptUrl = await this.uploadPptFile(pptFile, userId);
+      pptUrl = await uploadService.uploadPpt(pptFile, userId || 'anon');
     } else if (typeof pptFile === 'string') {
       pptUrl = pptFile;
     }

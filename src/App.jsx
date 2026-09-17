@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
 
 import Loader from './components/Loader';
@@ -11,7 +11,8 @@ import BackgroundDecorations from './components/ui/BackgroundDecorations';
 import ChatWidget from './components/ChatWidget';
 import AuthModal from './components/AuthModal';
 import AdminDashboard from './components/AdminDashboard';
-import { authService } from './services/auth';
+import UserDashboard from './components/UserDashboard';
+import useAuth from './hooks/useAuth';
 
 import Hero from './components/Hero';
 import About from './components/About';
@@ -30,38 +31,14 @@ import Footer from './components/Footer';
  * ZAYATHON Application Shell
  */
 function App() {
-  const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState(null);
+  const [initialLoading, setInitialLoading] = useState(true);
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authModalMode, setAuthModalMode] = useState('login'); // 'login' | 'signup' | 'forgot'
   const [adminDashboardOpen, setAdminDashboardOpen] = useState(false);
+  const [userDashboardOpen, setUserDashboardOpen] = useState(false);
 
-  // Initialize and listen to Auth session
-  useEffect(() => {
-    const initAuth = async () => {
-      try {
-        const currentUser = await authService.getCurrentUser();
-        if (currentUser) setUser(currentUser);
-      } catch (err) {
-        console.warn('Auth initialization fallback:', err.message);
-      }
-    };
-    initAuth();
-
-    const subscription = authService.onAuthStateChange((event, session, profile) => {
-      if (session?.user) {
-        setUser({ ...session.user, profile });
-      } else {
-        setUser(null);
-      }
-    });
-
-    return () => {
-      if (subscription && typeof subscription.unsubscribe === 'function') {
-        subscription.unsubscribe();
-      }
-    };
-  }, []);
+  // Initialize Auth state via custom useAuth hook
+  const { user, profile, isAuthenticated, isAdmin, signOut, refreshUser } = useAuth();
 
   const handleOpenAuth = (mode = 'login') => {
     setAuthModalMode(mode);
@@ -70,8 +47,7 @@ function App() {
 
   const handleLogout = async () => {
     try {
-      await authService.signOut();
-      setUser(null);
+      await signOut();
     } catch (err) {
       console.error('Logout error:', err.message);
     }
@@ -81,7 +57,7 @@ function App() {
     <>
       {/* 1. Initial Animated Boot Loader */}
       <AnimatePresence>
-        {loading && <Loader onComplete={() => setLoading(false)} />}
+        {initialLoading && <Loader onComplete={() => setInitialLoading(false)} />}
       </AnimatePresence>
 
       {/* 2. Top Window Scroll Progress Bar */}
@@ -102,6 +78,7 @@ function App() {
           user={user}
           onOpenAuth={handleOpenAuth}
           onOpenAdmin={() => setAdminDashboardOpen(true)}
+          onOpenUserDashboard={() => setUserDashboardOpen(true)}
           onLogout={handleLogout}
         />
 
@@ -134,14 +111,19 @@ function App() {
           isOpen={authModalOpen}
           onClose={() => setAuthModalOpen(false)}
           initialMode={authModalMode}
-          onAuthSuccess={(data) => {
-            if (data?.user) {
-              setUser({ ...data.user, profile: data.profile });
-            }
+          onAuthSuccess={() => {
+            refreshUser();
           }}
         />
 
-        {/* 12. Admin Command Center Dashboard */}
+        {/* 12. User Participant Dashboard Modal */}
+        <UserDashboard
+          isOpen={userDashboardOpen}
+          onClose={() => setUserDashboardOpen(false)}
+          user={user}
+        />
+
+        {/* 13. Admin Command Center Dashboard Modal */}
         <AdminDashboard
           isOpen={adminDashboardOpen}
           onClose={() => setAdminDashboardOpen(false)}

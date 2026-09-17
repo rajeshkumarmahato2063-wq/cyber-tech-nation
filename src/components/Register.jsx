@@ -232,6 +232,8 @@ const Register = () => {
         innovationDomain: formData.domain,
         projectTitle: `${formData.teamName} - ${formData.domain} Project`,
         projectDescription: `Registered by ${formData.leaderName} (${formData.email}) from ${formData.college}`,
+        proposalFile: formData.proposalFile || null,
+        pptFile: formData.pptFile || null,
       });
 
       const regId = reg?.id ? `ZYT-${reg.id.substring(0, 8).toUpperCase()}` : `ZYT-2026-${Math.floor(1000 + Math.random() * 9000)}`;
@@ -580,35 +582,74 @@ const Register = () => {
                     </div>
                   </div>
 
-                  {/* Members Roster Panel */}
+                  {/* PDF Uploads Panel */}
                   <div className="rounded-2xl p-5 bg-white/5 border border-white/10 space-y-3">
-                    <div className="flex items-center justify-between border-b border-white/10 pb-2">
-                      <h4 className="text-cyan-400 font-bold uppercase tracking-wider text-xs">
-                        Team Roster ({1 + formData.members.length} Members)
-                      </h4>
-                      <button
-                        type="button"
-                        onClick={() => setStep(2)}
-                        className="text-[11px] font-semibold text-cyan-400 hover:underline flex items-center gap-1"
-                      >
-                        <Edit3 className="w-3 h-3" /> Edit Members
-                      </button>
-                    </div>
+                    <h4 className="text-cyan-400 font-bold uppercase tracking-wider text-xs border-b border-white/10 pb-2 flex items-center justify-between">
+                      <span>Project Documents (PDF Only, Max 10MB)</span>
+                    </h4>
 
-                    <div className="space-y-2">
-                      {/* Leader */}
-                      <div className="flex items-center justify-between p-2.5 rounded-lg bg-white/5 text-xs">
-                        <span className="font-bold text-white">1. {formData.leaderName} (Leader)</span>
-                        <span className="text-slate-400">{formData.department}</span>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                      {/* Proposal PDF Upload */}
+                      <div>
+                        <label className="block text-slate-300 font-semibold mb-1">Proposal PDF</label>
+                        <input
+                          type="file"
+                          accept=".pdf,application/pdf"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              if (!file.name.toLowerCase().endsWith('.pdf')) {
+                                alert('Only PDF files (.pdf) are allowed.');
+                                e.target.value = '';
+                                return;
+                              }
+                              if (file.size > 10 * 1024 * 1024) {
+                                alert('File size exceeds maximum limit of 10 MB.');
+                                e.target.value = '';
+                                return;
+                              }
+                              setFormData((prev) => ({ ...prev, proposalFile: file }));
+                            }
+                          }}
+                          className="cyber-input text-xs cursor-pointer text-slate-300"
+                        />
+                        {formData.proposalFile && (
+                          <span className="text-[11px] text-cyan-400 block mt-1 font-mono">
+                            ✓ {formData.proposalFile.name}
+                          </span>
+                        )}
                       </div>
 
-                      {/* Additional Members */}
-                      {formData.members.map((m, idx) => (
-                        <div key={m.id} className="flex items-center justify-between p-2.5 rounded-lg bg-white/5 text-xs">
-                          <span className="font-bold text-white">{idx + 2}. {m.name}</span>
-                          <span className="text-slate-400">{m.email} • {m.department}</span>
-                        </div>
-                      ))}
+                      {/* PPT PDF Upload */}
+                      <div>
+                        <label className="block text-slate-300 font-semibold mb-1">Presentation Deck (PDF)</label>
+                        <input
+                          type="file"
+                          accept=".pdf,application/pdf"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              if (!file.name.toLowerCase().endsWith('.pdf')) {
+                                alert('Only PDF files (.pdf) are allowed.');
+                                e.target.value = '';
+                                return;
+                              }
+                              if (file.size > 10 * 1024 * 1024) {
+                                alert('File size exceeds maximum limit of 10 MB.');
+                                e.target.value = '';
+                                return;
+                              }
+                              setFormData((prev) => ({ ...prev, pptFile: file }));
+                            }
+                          }}
+                          className="cyber-input text-xs cursor-pointer text-slate-300"
+                        />
+                        {formData.pptFile && (
+                          <span className="text-[11px] text-purple-400 block mt-1 font-mono">
+                            ✓ {formData.pptFile.name}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>

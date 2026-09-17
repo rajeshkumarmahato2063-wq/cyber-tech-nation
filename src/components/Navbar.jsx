@@ -7,7 +7,7 @@ import ThemeToggle from './ThemeToggle';
 /**
  * Sticky Glassmorphism Navbar with Mobile Drawer, Active Scroll Highlighting, Auth & Admin Controls
  */
-const Navbar = ({ user, onOpenAuth, onOpenAdmin, onLogout }) => {
+const Navbar = ({ user, onOpenAuth, onOpenAdmin, onOpenUserDashboard, onLogout }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('hero');
@@ -149,6 +149,16 @@ const Navbar = ({ user, onOpenAuth, onOpenAdmin, onLogout }) => {
                   <div className="px-3 py-2 border-b border-white/10 text-slate-400 truncate">
                     {user.email}
                   </div>
+                  <button
+                    onClick={() => {
+                      setUserDropdownOpen(false);
+                      if (onOpenUserDashboard) onOpenUserDashboard();
+                    }}
+                    className="w-full text-left px-3 py-2 rounded-xl hover:bg-white/5 text-cyan-300 flex items-center gap-2"
+                  >
+                    <User className="w-3.5 h-3.5" /> My Dashboard
+                  </button>
+
                   {isAdmin && (
                     <button
                       onClick={() => {
