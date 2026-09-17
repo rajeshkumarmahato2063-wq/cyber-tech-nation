@@ -14,6 +14,13 @@ import { motion } from 'framer-motion';
  * @param {string} [props.type='button']
  * @param {boolean} [props.disabled=false]
  */
+const renderIcon = (icon) => {
+  if (!icon) return null;
+  if (React.isValidElement(icon)) return icon;
+  const IconComponent = icon;
+  return <IconComponent className="w-4 h-4" />;
+};
+
 const Button = ({
   variant = 'primary',
   children,
@@ -49,7 +56,7 @@ const Button = ({
 
       {Icon && iconPosition === 'left' && (
         <span className="w-5 h-5 flex items-center justify-center shrink-0">
-          {typeof Icon === 'function' ? <Icon className="w-4 h-4" /> : Icon}
+          {renderIcon(Icon)}
         </span>
       )}
 
@@ -57,7 +64,7 @@ const Button = ({
 
       {Icon && iconPosition === 'right' && (
         <span className="w-5 h-5 flex items-center justify-center shrink-0">
-          {typeof Icon === 'function' ? <Icon className="w-4 h-4" /> : Icon}
+          {renderIcon(Icon)}
         </span>
       )}
     </motion.button>
