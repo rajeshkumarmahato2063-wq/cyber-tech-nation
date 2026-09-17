@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { 
   Cpu, 
@@ -14,6 +14,7 @@ import {
   Handshake
 } from 'lucide-react';
 import SectionTitle from './ui/SectionTitle';
+import { sponsorService } from '../services/sponsor';
 
 /**
  * Sponsor Tier Data Configuration
@@ -59,6 +60,36 @@ const SPONSOR_TIERS = [
 ];
 
 const Sponsors = () => {
+  const [tiers, setTiers] = useState(SPONSOR_TIERS);
+
+  useEffect(() => {
+    const fetchSponsors = async () => {
+      try {
+        const liveSponsors = await sponsorService.getSponsors();
+        if (liveSponsors && liveSponsors.length > 0) {
+          // Dynamic custom tier mapping if live sponsors are present
+          const customTier = {
+            tier: 'Featured Sponsors',
+            badge: 'Verified Event Sponsors',
+            badgeColor: 'border-cyan-400/40 text-cyan-300 bg-cyan-500/10',
+            gridCols: 'grid-cols-1 sm:grid-cols-3',
+            cardPadding: 'p-6',
+            sponsors: liveSponsors.map((s) => ({
+              id: s.id,
+              name: s.name,
+              category: s.tier || 'Sponsor',
+              icon: Handshake,
+              accent: 'from-cyan-400 to-blue-600',
+            })),
+          };
+          setTiers([customTier, ...SPONSOR_TIERS]);
+        }
+      } catch (err) {
+        console.warn('Using preset sponsor tiers fallback');
+      }
+    };
+    fetchSponsors();
+  }, []);
   return (
     <section id="sponsors" className="section-container relative z-10 overflow-hidden">
       {/* Background Ambient Lights */}
@@ -74,7 +105,7 @@ const Sponsors = () => {
 
       {/* Sponsor Tiers Showcase */}
       <div className="space-y-12 max-w-5xl mx-auto">
-        {SPONSOR_TIERS.map((tierGroup, tIdx) => (
+        {tiers.map((tierGroup, tIdx) => (
           <motion.div
             key={tierGroup.tier}
             initial={{ opacity: 0, y: 30 }}

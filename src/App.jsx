@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AnimatePresence } from 'framer-motion';
 
 import Loader from './components/Loader';
@@ -9,6 +9,9 @@ import BackToTop from './components/BackToTop';
 import Navbar from './components/Navbar';
 import BackgroundDecorations from './components/ui/BackgroundDecorations';
 import ChatWidget from './components/ChatWidget';
+import AuthModal from './components/AuthModal';
+import AdminDashboard from './components/AdminDashboard';
+import { authService } from './services/auth';
 
 import Hero from './components/Hero';
 import About from './components/About';
@@ -28,6 +31,51 @@ import Footer from './components/Footer';
  */
 function App() {
   const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [authModalMode, setAuthModalMode] = useState('login'); // 'login' | 'signup' | 'forgot'
+  const [adminDashboardOpen, setAdminDashboardOpen] = useState(false);
+
+  // Initialize and listen to Auth session
+  useEffect(() => {
+    const initAuth = async () => {
+      try {
+        const currentUser = await authService.getCurrentUser();
+        if (currentUser) setUser(currentUser);
+      } catch (err) {
+        console.warn('Auth initialization fallback:', err.message);
+      }
+    };
+    initAuth();
+
+    const subscription = authService.onAuthStateChange((event, session, profile) => {
+      if (session?.user) {
+        setUser({ ...session.user, profile });
+      } else {
+        setUser(null);
+      }
+    });
+
+    return () => {
+      if (subscription && typeof subscription.unsubscribe === 'function') {
+        subscription.unsubscribe();
+      }
+    };
+  }, []);
+
+  const handleOpenAuth = (mode = 'login') => {
+    setAuthModalMode(mode);
+    setAuthModalOpen(true);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await authService.signOut();
+      setUser(null);
+    } catch (err) {
+      console.error('Logout error:', err.message);
+    }
+  };
 
   return (
     <>
@@ -49,8 +97,13 @@ function App() {
         {/* 5. Ambient Cyber Background Lighting & Orbs */}
         <BackgroundDecorations />
 
-        {/* 6. Sticky Navbar with Theme Toggle */}
-        <Navbar />
+        {/* 6. Sticky Navbar with Auth Controls & Theme Toggle */}
+        <Navbar
+          user={user}
+          onOpenAuth={handleOpenAuth}
+          onOpenAdmin={() => setAdminDashboardOpen(true)}
+          onLogout={handleLogout}
+        />
 
         {/* 7. Main Application Flow */}
         <main className="flex-1 z-10">
@@ -75,6 +128,24 @@ function App() {
 
         {/* 10. Live AI Chat Assistant Widget */}
         <ChatWidget />
+
+        {/* 11. Auth Modal (Sign In / Sign Up / Forgot Password) */}
+        <AuthModal
+          isOpen={authModalOpen}
+          onClose={() => setAuthModalOpen(false)}
+          initialMode={authModalMode}
+          onAuthSuccess={(data) => {
+            if (data?.user) {
+              setUser({ ...data.user, profile: data.profile });
+            }
+          }}
+        />
+
+        {/* 12. Admin Command Center Dashboard */}
+        <AdminDashboard
+          isOpen={adminDashboardOpen}
+          onClose={() => setAdminDashboardOpen(false)}
+        />
       </div>
     </>
   );

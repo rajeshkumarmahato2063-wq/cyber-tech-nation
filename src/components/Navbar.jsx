@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Terminal, Menu, X, Rocket } from 'lucide-react';
+import { Terminal, Menu, X, Rocket, User, ShieldAlert, LogOut } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Button from './ui/Button';
 import ThemeToggle from './ThemeToggle';
 
 /**
- * Sticky Glassmorphism Navbar with Mobile Drawer and Active Scroll Highlighting
+ * Sticky Glassmorphism Navbar with Mobile Drawer, Active Scroll Highlighting, Auth & Admin Controls
  */
-const Navbar = () => {
+const Navbar = ({ user, onOpenAuth, onOpenAdmin, onLogout }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('hero');
+  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
 
   const navLinks = [
     { name: 'Home', href: '#hero' },
@@ -57,6 +58,8 @@ const Navbar = () => {
       elem.scrollIntoView({ behavior: 'smooth' });
     }
   };
+
+  const isAdmin = user?.profile?.role === 'admin' || user?.profile?.role === 'organizer' || user?.user_metadata?.role === 'admin';
 
   return (
     <motion.header
@@ -115,6 +118,69 @@ const Navbar = () => {
         {/* Desktop Action CTA & Theme Toggle */}
         <div className="hidden md:flex items-center gap-3">
           <ThemeToggle />
+
+          {/* Admin Dashboard Trigger */}
+          {isAdmin && (
+            <button
+              onClick={onOpenAdmin}
+              className="p-2.5 rounded-xl bg-purple-500/10 border border-purple-500/30 text-purple-300 hover:bg-purple-500/20 transition-all font-mono text-xs font-semibold flex items-center gap-1.5"
+              title="Open Admin Dashboard"
+            >
+              <ShieldAlert className="w-4 h-4 text-purple-400" />
+              <span>Admin</span>
+            </button>
+          )}
+
+          {/* User Auth Profile Dropdown or Login Button */}
+          {user ? (
+            <div className="relative">
+              <button
+                onClick={() => setUserDropdownOpen(!userDropdownOpen)}
+                className="flex items-center gap-2 px-3 py-2 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/20 transition-all"
+              >
+                <User className="w-4 h-4" />
+                <span className="text-xs font-mono font-semibold max-w-[100px] truncate">
+                  {user.profile?.full_name || user.email?.split('@')[0]}
+                </span>
+              </button>
+
+              {userDropdownOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-[#0B1120] border border-white/10 rounded-2xl p-2 shadow-2xl z-50 font-mono text-xs">
+                  <div className="px-3 py-2 border-b border-white/10 text-slate-400 truncate">
+                    {user.email}
+                  </div>
+                  {isAdmin && (
+                    <button
+                      onClick={() => {
+                        setUserDropdownOpen(false);
+                        onOpenAdmin();
+                      }}
+                      className="w-full text-left px-3 py-2 rounded-xl hover:bg-white/5 text-purple-300 flex items-center gap-2"
+                    >
+                      <ShieldAlert className="w-3.5 h-3.5" /> Admin Panel
+                    </button>
+                  )}
+                  <button
+                    onClick={() => {
+                      setUserDropdownOpen(false);
+                      onLogout();
+                    }}
+                    className="w-full text-left px-3 py-2 rounded-xl hover:bg-rose-500/10 text-rose-400 flex items-center gap-2 mt-1"
+                  >
+                    <LogOut className="w-3.5 h-3.5" /> Sign Out
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <button
+              onClick={() => onOpenAuth('login')}
+              className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-xs font-mono text-cyan-400 hover:bg-white/10 transition-all font-semibold"
+            >
+              Sign In
+            </button>
+          )}
+
           <a href="#register" onClick={(e) => handleNavClick(e, '#register')}>
             <Button variant="primary" icon={Rocket} iconPosition="right" className="!py-2.5 !px-5 text-xs">
               Register Now
@@ -125,6 +191,23 @@ const Navbar = () => {
         {/* Mobile Hamburger Toggle & Theme Toggle */}
         <div className="md:hidden flex items-center gap-2">
           <ThemeToggle />
+
+          {user ? (
+            <button
+              onClick={() => onLogout()}
+              className="p-2 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs font-mono"
+            >
+              Logout
+            </button>
+          ) : (
+            <button
+              onClick={() => onOpenAuth('login')}
+              className="p-2 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-mono"
+            >
+              Login
+            </button>
+          )}
+
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="p-2 rounded-xl bg-white/5 border border-white/10 text-slate-300 hover:text-white focus:outline-none"
@@ -163,6 +246,19 @@ const Navbar = () => {
                   </a>
                 );
               })}
+
+              {isAdmin && (
+                <button
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    onOpenAdmin();
+                  }}
+                  className="w-full text-left px-4 py-3 rounded-xl bg-purple-500/10 border border-purple-500/30 text-purple-300 font-mono text-sm"
+                >
+                  🛡️ Admin Command Center
+                </button>
+              )}
+
               <div className="pt-2 border-t border-white/10">
                 <a href="#register" onClick={(e) => handleNavClick(e, '#register')} className="w-full block">
                   <Button variant="primary" icon={Rocket} className="w-full justify-center">

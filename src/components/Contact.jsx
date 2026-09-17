@@ -21,6 +21,8 @@ const QUICK_CONTACT_ORGANIZERS = [
   }
 ];
 
+import { contactService } from '../services/contact';
+
 const Contact = () => {
   const [formData, setFormData] = useState({
     name: '',
@@ -32,18 +34,28 @@ const Contact = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSending, setIsSending] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.name || !formData.email || !formData.message) return;
 
     setIsSending(true);
 
-    setTimeout(() => {
+    try {
+      await contactService.submitContactMessage({
+        name: formData.name,
+        email: formData.email,
+        subject: formData.subject || 'General Inquiry',
+        message: formData.message,
+      });
+
       setIsSending(false);
       setIsSubmitted(true);
       setFormData({ name: '', email: '', subject: '', message: '' });
       setTimeout(() => setIsSubmitted(false), 5000);
-    }, 1200);
+    } catch (err) {
+      alert(`Failed to send message: ${err.message || 'Network error'}`);
+      setIsSending(false);
+    }
   };
 
   return (

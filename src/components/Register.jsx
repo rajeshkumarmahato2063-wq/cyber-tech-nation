@@ -20,7 +20,8 @@ import {
 import SectionTitle from './ui/SectionTitle';
 import RegistrationStepper from './RegistrationStepper';
 import TeamMemberForm from './TeamMemberForm';
-import SuccessModal from './SuccessModal';
+import { teamService } from '../services/team';
+import { registrationService } from '../services/registration';
 
 /**
  * 9 Innovation Domains List
@@ -205,13 +206,34 @@ const Register = () => {
   /**
    * Final Submission Handler (Step 3 -> Step 4)
    */
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setErrors({});
 
-    // Simulate async API registration submission
-    setTimeout(() => {
-      const regId = `ZYT-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+    try {
+      // 1. Create Team in Supabase
+      const team = await teamService.createTeam({
+        teamName: formData.teamName,
+        college: formData.college,
+        leaderId: null,
+      });
+
+      // 2. Add members to team
+      if (formData.members && formData.members.length > 0) {
+        await teamService.addTeamMembers(team.id, formData.members);
+      }
+
+      // 3. Create Registration in Supabase
+      const reg = await registrationService.createRegistration({
+        userId: null,
+        teamId: team.id,
+        innovationDomain: formData.domain,
+        projectTitle: `${formData.teamName} - ${formData.domain} Project`,
+        projectDescription: `Registered by ${formData.leaderName} (${formData.email}) from ${formData.college}`,
+      });
+
+      const regId = reg?.id ? `ZYT-${reg.id.substring(0, 8).toUpperCase()}` : `ZYT-2026-${Math.floor(1000 + Math.random() * 9000)}`;
       const payload = {
         regId,
         teamName: formData.teamName,
@@ -221,10 +243,13 @@ const Register = () => {
       };
 
       setRegisteredData(payload);
-      setIsSubmitting(false);
       setStep(4);
       setIsSuccessModalOpen(true);
-    }, 1500);
+    } catch (err) {
+      alert(`Registration error: ${err.message || 'Server error'}`);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (

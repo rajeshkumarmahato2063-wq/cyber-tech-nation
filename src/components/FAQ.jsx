@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import SectionTitle from './ui/SectionTitle';
 import FAQItem from './FAQItem';
+import { faqService } from '../services/faq';
 
 /**
  * FAQ Data List
@@ -39,8 +40,23 @@ const FAQ_LIST = [
 ];
 
 const FAQ = () => {
-  // Currently open accordion item ID (first one open by default)
+  const [faqs, setFaqs] = useState(FAQ_LIST);
   const [openId, setOpenId] = useState('who-can-participate');
+
+  useEffect(() => {
+    const fetchFaqs = async () => {
+      try {
+        const liveFaqs = await faqService.getFAQs();
+        if (liveFaqs && liveFaqs.length > 0) {
+          setFaqs(liveFaqs);
+          setOpenId(liveFaqs[0].id);
+        }
+      } catch (err) {
+        console.warn('Using preset FAQ list fallback');
+      }
+    };
+    fetchFaqs();
+  }, []);
 
   const handleToggle = (id) => {
     setOpenId((prev) => (prev === id ? null : id));
@@ -61,12 +77,12 @@ const FAQ = () => {
 
       {/* FAQ Accordion List */}
       <div className="max-w-3xl mx-auto space-y-4 pt-2">
-        {FAQ_LIST.map((faq, index) => (
+        {faqs.map((faq, index) => (
           <FAQItem
-            key={faq.id}
+            key={faq.id || index}
             faq={faq}
-            isOpen={openId === faq.id}
-            onToggle={() => handleToggle(faq.id)}
+            isOpen={openId === (faq.id || index)}
+            onToggle={() => handleToggle(faq.id || index)}
             index={index}
           />
         ))}
