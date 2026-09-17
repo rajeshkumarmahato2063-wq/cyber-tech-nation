@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Terminal, Menu, X, Rocket } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Button from './ui/Button';
+import ThemeToggle from './ThemeToggle';
 
 /**
  * Sticky Glassmorphism Navbar with Mobile Drawer and Active Scroll Highlighting
@@ -111,8 +112,9 @@ const Navbar = () => {
           })}
         </nav>
 
-        {/* Desktop Action CTA */}
-        <div className="hidden md:flex items-center gap-4">
+        {/* Desktop Action CTA & Theme Toggle */}
+        <div className="hidden md:flex items-center gap-3">
+          <ThemeToggle />
           <a href="#register" onClick={(e) => handleNavClick(e, '#register')}>
             <Button variant="primary" icon={Rocket} iconPosition="right" className="!py-2.5 !px-5 text-xs">
               Register Now
@@ -120,14 +122,17 @@ const Navbar = () => {
           </a>
         </div>
 
-        {/* Mobile Hamburger Toggle */}
-        <button
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="md:hidden p-2 rounded-xl bg-white/5 border border-white/10 text-slate-300 hover:text-white focus:outline-none"
-          aria-label="Toggle Navigation Menu"
-        >
-          {mobileMenuOpen ? <X className="w-6 h-6 text-cyan-400" /> : <Menu className="w-6 h-6" />}
-        </button>
+        {/* Mobile Hamburger Toggle & Theme Toggle */}
+        <div className="md:hidden flex items-center gap-2">
+          <ThemeToggle />
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="p-2 rounded-xl bg-white/5 border border-white/10 text-slate-300 hover:text-white focus:outline-none"
+            aria-label="Toggle Navigation Menu"
+          >
+            {mobileMenuOpen ? <X className="w-6 h-6 text-cyan-400" /> : <Menu className="w-6 h-6" />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Menu Drawer Overlay */}

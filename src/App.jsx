@@ -1,5 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { AnimatePresence } from 'framer-motion';
+
+import Loader from './components/Loader';
+import ParticlesBackground from './components/ParticlesBackground';
+import CursorGlow from './components/CursorGlow';
+import ScrollProgress from './components/ScrollProgress';
+import BackToTop from './components/BackToTop';
 import Navbar from './components/Navbar';
+import BackgroundDecorations from './components/ui/BackgroundDecorations';
+import ChatWidget from './components/ChatWidget';
+
 import Hero from './components/Hero';
 import About from './components/About';
 import Stats from './components/Stats';
@@ -12,35 +22,61 @@ import Register from './components/Register';
 import FAQ from './components/FAQ';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
-import BackgroundDecorations from './components/ui/BackgroundDecorations';
 
 /**
  * ZAYATHON Application Shell
- * Configured with Phase 2 Cyber-Tech Design System
  */
 function App() {
-  return (
-    <div className="relative min-h-screen bg-[#050816] text-[#F8FAFC] flex flex-col font-sans overflow-hidden selection:bg-[#00E5FF] selection:text-[#050816]">
-      {/* Reusable Cyber Ambient Background Lighting */}
-      <BackgroundDecorations />
+  const [loading, setLoading] = useState(true);
 
-      {/* Main UI Layout */}
-      <Navbar />
-      <main className="flex-1 z-10">
-        <Hero />
-        <About />
-        <Stats />
-        <Domains />
-        <Timeline />
-        <Prizes />
-        <Sponsors />
-        <Team />
-        <Register />
-        <FAQ />
-        <Contact />
-      </main>
-      <Footer />
-    </div>
+  return (
+    <>
+      {/* 1. Initial Animated Boot Loader */}
+      <AnimatePresence>
+        {loading && <Loader onComplete={() => setLoading(false)} />}
+      </AnimatePresence>
+
+      {/* 2. Top Window Scroll Progress Bar */}
+      <ScrollProgress />
+
+      {/* 3. Custom Desktop Glowing Pointer */}
+      <CursorGlow />
+
+      <div className="relative min-h-screen bg-[#050816] text-[#F8FAFC] flex flex-col font-sans overflow-x-hidden selection:bg-[#00E5FF] selection:text-[#050816] theme-transition">
+        {/* 4. Canvas Particle Network Background */}
+        <ParticlesBackground />
+
+        {/* 5. Ambient Cyber Background Lighting & Orbs */}
+        <BackgroundDecorations />
+
+        {/* 6. Sticky Navbar with Theme Toggle */}
+        <Navbar />
+
+        {/* 7. Main Application Flow */}
+        <main className="flex-1 z-10">
+          <Hero />
+          <About />
+          <Stats />
+          <Domains />
+          <Timeline />
+          <Prizes />
+          <Sponsors />
+          <Team />
+          <Register />
+          <FAQ />
+          <Contact />
+        </main>
+
+        {/* 8. Footer */}
+        <Footer />
+
+        {/* 9. Floating Back To Top Button */}
+        <BackToTop />
+
+        {/* 10. Live AI Chat Assistant Widget */}
+        <ChatWidget />
+      </div>
+    </>
   );
 }
 
