@@ -44,10 +44,61 @@ export const adminService = {
   },
 
   /**
+   * Get Analytics data (Domain breakdown, status distribution, college stats)
+   */
+  async getAnalyticsData() {
+    if (!isSupabaseConfigured()) {
+      return {
+        domainBreakdown: [
+          { domain: 'Agentic AI', count: 45 },
+          { domain: 'Robotics', count: 30 },
+          { domain: 'Cybersecurity', count: 25 },
+          { domain: 'Web3 & FinTech', count: 18 },
+          { domain: 'Smart Cities', count: 10 },
+        ],
+        statusDistribution: [
+          { status: 'Approved', count: 76 },
+          { status: 'Pending', count: 42 },
+          { status: 'Rejected', count: 10 },
+        ],
+      };
+    }
+
+    const { data: regs } = await supabase
+      .from('registrations')
+      .select('innovation_domain, status');
+
+    const domainCounts = {};
+    const statusCounts = { Approved: 0, Pending: 0, Rejected: 0 };
+
+    (regs || []).forEach((r) => {
+      const d = r.innovation_domain || 'Open Innovation';
+      domainCounts[d] = (domainCounts[d] || 0) + 1;
+
+      if (r.status === 'approved') statusCounts.Approved++;
+      else if (r.status === 'rejected') statusCounts.Rejected++;
+      else statusCounts.Pending++;
+    });
+
+    const domainBreakdown = Object.keys(domainCounts).map((domain) => ({
+      domain,
+      count: domainCounts[domain],
+    }));
+
+    const statusDistribution = [
+      { status: 'Approved', count: statusCounts.Approved },
+      { status: 'Pending', count: statusCounts.Pending },
+      { status: 'Rejected', count: statusCounts.Rejected },
+    ];
+
+    return { domainBreakdown, statusDistribution };
+  },
+
+  /**
    * Get all registrations with optional filter & pagination
    */
-  async getAllRegistrations({ status = 'all', domain = 'all', search = '', limit = 20, offset = 0 } = {}) {
-    if (!isSupabaseConfigured()) return [];
+  async getAllRegistrations({ status = 'all', domain = 'all', search = '', limit = 50, offset = 0 } = {}) {
+    if (!isSupabaseConfigured()) return { registrations: [], count: 0 };
 
     let query = supabase
       .from('registrations')
@@ -116,7 +167,7 @@ export const adminService = {
   },
 
   /**
-   * Subscribe to admin realtime table updates (registrations, contacts)
+   * Subscribe to admin realtime table updates
    */
   subscribeToAdminRealtime(callback) {
     if (!isSupabaseConfigured()) return { unsubscribe: () => {} };
@@ -126,6 +177,7 @@ export const adminService = {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'registrations' }, () => callback())
       .on('postgres_changes', { event: '*', schema: 'public', table: 'contacts' }, () => callback())
       .on('postgres_changes', { event: '*', schema: 'public', table: 'teams' }, () => callback())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'profiles' }, () => callback())
       .subscribe();
 
     return {
