@@ -30,6 +30,7 @@ import Footer from './components/Footer';
 import JudgePortal from './components/JudgePortal';
 import LiveEventDashboard from './components/LiveEventDashboard';
 import MaintenanceBanner from './components/MaintenanceBanner';
+import EmergencyBroadcastBanner from './components/EmergencyBroadcastBanner';
 
 /**
  * ZAYATHON Application Shell - Production Ready
@@ -74,6 +75,9 @@ function App() {
 
       {/* Maintenance Mode Banner */}
       <MaintenanceBanner />
+
+      {/* Realtime Emergency Operations Broadcast Banner */}
+      <EmergencyBroadcastBanner />
 
       <div className="relative min-h-screen bg-[var(--bg,#050816)] text-[var(--text,#F8FAFC)] flex flex-col font-sans overflow-x-hidden selection:bg-[#00E5FF] selection:text-[#050816] theme-transition">
         {/* 4. Canvas Particle Network Background */}
@@ -151,6 +155,7 @@ function App() {
         <LiveEventDashboard
           isOpen={liveDashboardOpen}
           onClose={() => setLiveDashboardOpen(false)}
+          user={user}
         />
       </div>
     </>

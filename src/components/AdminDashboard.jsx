@@ -26,6 +26,7 @@ import CheckInScanner from './admin/CheckInScanner';
 import AnnouncementsManager from './admin/AnnouncementsManager';
 import AuditLogsViewer from './admin/AuditLogsViewer';
 import MaintenancePanel from './admin/MaintenancePanel';
+import EventControlPanel from './admin/EventControlPanel';
 
 
 
@@ -158,6 +159,11 @@ const AdminDashboard = ({ isOpen, onClose }) => {
             {/* 1. OVERVIEW & ANALYTICS TAB */}
             {activeTab === 'overview' && (
               <AnalyticsCharts analytics={analytics} stats={stats} />
+            )}
+
+            {/* 1.5 LIVE EVENT MASTER CONTROLS TAB */}
+            {activeTab === 'live_ops' && (
+              <EventControlPanel />
             )}
 
             {/* 2. REGISTRATIONS DATA TABLE TAB */}
