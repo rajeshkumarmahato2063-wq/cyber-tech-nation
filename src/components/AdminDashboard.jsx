@@ -25,6 +25,8 @@ import AnalyticsCharts from './admin/AnalyticsCharts';
 import CheckInScanner from './admin/CheckInScanner';
 import AnnouncementsManager from './admin/AnnouncementsManager';
 import AuditLogsViewer from './admin/AuditLogsViewer';
+import MaintenancePanel from './admin/MaintenancePanel';
+
 
 
 /**
@@ -184,7 +186,12 @@ const AdminDashboard = ({ isOpen, onClose }) => {
               <AnnouncementsManager />
             )}
 
-            {/* 5. AUDIT LOGS TRAIL TAB */}
+            {/* 5. MAINTENANCE & BACKUPS TAB */}
+            {activeTab === 'maintenance' && (
+              <MaintenancePanel />
+            )}
+
+            {/* 6. AUDIT LOGS TRAIL TAB */}
             {activeTab === 'audit' && (
               <AuditLogsViewer />
             )}

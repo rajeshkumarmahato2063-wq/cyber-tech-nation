@@ -3,6 +3,8 @@ import { Terminal, Menu, X, Rocket, User, ShieldAlert, LogOut } from 'lucide-rea
 import { motion, AnimatePresence } from 'framer-motion';
 import Button from './ui/Button';
 import ThemeToggle from './ThemeToggle';
+import NotificationBell from './NotificationBell';
+
 
 /**
  * Sticky Glassmorphism Navbar with Mobile Drawer, Active Scroll Highlighting, Auth & Admin Controls
@@ -120,6 +122,8 @@ const Navbar = ({ user, onOpenAuth, onOpenAdmin, onOpenUserDashboard, onOpenJudg
         {/* Desktop Action CTA & Theme Toggle */}
         <div className="hidden md:flex items-center gap-2.5">
           <ThemeToggle />
+          <NotificationBell user={user} />
+
 
           {/* Live Arena Trigger */}
           <button

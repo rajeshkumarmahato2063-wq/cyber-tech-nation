@@ -71,6 +71,9 @@ function App() {
       {/* 3. Custom Desktop Glowing Pointer */}
       <CursorGlow />
 
+      {/* Maintenance Mode Banner */}
+      <MaintenanceBanner />
+
       <div className="relative min-h-screen bg-[var(--bg,#050816)] text-[var(--text,#F8FAFC)] flex flex-col font-sans overflow-x-hidden selection:bg-[#00E5FF] selection:text-[#050816] theme-transition">
         {/* 4. Canvas Particle Network Background */}
         <ParticlesBackground />

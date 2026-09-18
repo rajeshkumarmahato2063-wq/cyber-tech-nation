@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layers, Users, Shield, MessageSquare, HelpCircle, Award, BarChart3, QrCode, Bell, FileText } from 'lucide-react';
+import { Layers, Users, Shield, MessageSquare, HelpCircle, Award, BarChart3, QrCode, Bell, FileText, Settings } from 'lucide-react';
 
 /**
  * Cyber Admin Navigation Sidebar / Tab Bar - Production Ready
@@ -10,6 +10,7 @@ const AdminSidebar = ({ activeTab, setActiveTab, counts = {} }) => {
     { id: 'registrations', label: 'Registrations', icon: Layers, count: counts.registrations },
     { id: 'checkin', label: 'QR Check-In', icon: QrCode },
     { id: 'announcements', label: 'Announcements', icon: Bell },
+    { id: 'maintenance', label: 'Maintenance & Backups', icon: Settings },
     { id: 'teams', label: 'Teams Roster', icon: Users, count: counts.teams },
     { id: 'users', label: 'User Roles', icon: Shield, count: counts.users },
     { id: 'audit', label: 'Audit Logs', icon: FileText },
@@ -17,6 +18,7 @@ const AdminSidebar = ({ activeTab, setActiveTab, counts = {} }) => {
     { id: 'faqs', label: 'Manage FAQs', icon: HelpCircle },
     { id: 'sponsors', label: 'Manage Sponsors', icon: Award },
   ];
+
 
   return (
     <div className="flex flex-wrap items-center gap-2 pb-4 border-b border-white/10 shrink-0 font-mono text-xs">
