@@ -22,6 +22,10 @@ import RegistrationModal from './admin/RegistrationModal';
 import SponsorForm from './admin/SponsorForm';
 import FAQEditor from './admin/FAQEditor';
 import AnalyticsCharts from './admin/AnalyticsCharts';
+import CheckInScanner from './admin/CheckInScanner';
+import AnnouncementsManager from './admin/AnnouncementsManager';
+import AuditLogsViewer from './admin/AuditLogsViewer';
+
 
 /**
  * Organizer & Admin Command Center Modal Container
@@ -170,7 +174,22 @@ const AdminDashboard = ({ isOpen, onClose }) => {
               />
             )}
 
-            {/* 3. TEAMS ROSTER TAB */}
+            {/* 3. EVENT CHECK-IN SCANNER TAB */}
+            {activeTab === 'checkin' && (
+              <CheckInScanner registrations={registrations} onRefresh={refreshAdminData} />
+            )}
+
+            {/* 4. ANNOUNCEMENTS BROADCAST TAB */}
+            {activeTab === 'announcements' && (
+              <AnnouncementsManager />
+            )}
+
+            {/* 5. AUDIT LOGS TRAIL TAB */}
+            {activeTab === 'audit' && (
+              <AuditLogsViewer />
+            )}
+
+            {/* 6. TEAMS ROSTER TAB */}
             {activeTab === 'teams' && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 font-mono text-xs">
                 {teams.length === 0 ? (
@@ -206,7 +225,7 @@ const AdminDashboard = ({ isOpen, onClose }) => {
               </div>
             )}
 
-            {/* 4. USERS MANAGEMENT TAB */}
+            {/* 7. USERS MANAGEMENT TAB */}
             {activeTab === 'users' && (
               <div className="border border-white/10 rounded-2xl overflow-hidden bg-white/5 font-mono text-xs">
                 <table className="w-full text-left border-collapse">
@@ -265,7 +284,7 @@ const AdminDashboard = ({ isOpen, onClose }) => {
               </div>
             )}
 
-            {/* 5. CONTACT INQUIRIES TAB */}
+            {/* 8. CONTACT INQUIRIES TAB */}
             {activeTab === 'contacts' && (
               <div className="space-y-3 font-mono text-xs">
                 {contacts.length === 0 ? (
@@ -285,12 +304,12 @@ const AdminDashboard = ({ isOpen, onClose }) => {
               </div>
             )}
 
-            {/* 6. MANAGE FAQS TAB */}
+            {/* 9. MANAGE FAQS TAB */}
             {activeTab === 'faqs' && (
               <FAQEditor faqs={faqs} onRefresh={refreshAdminData} />
             )}
 
-            {/* 7. MANAGE SPONSORS TAB */}
+            {/* 10. MANAGE SPONSORS TAB */}
             {activeTab === 'sponsors' && (
               <SponsorForm sponsors={sponsors} onRefresh={refreshAdminData} />
             )}

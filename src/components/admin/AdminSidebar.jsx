@@ -1,15 +1,18 @@
 import React from 'react';
-import { Layers, Users, Shield, MessageSquare, HelpCircle, Award, BarChart3, ShieldAlert } from 'lucide-react';
+import { Layers, Users, Shield, MessageSquare, HelpCircle, Award, BarChart3, QrCode, Bell, FileText } from 'lucide-react';
 
 /**
- * Cyber Admin Navigation Sidebar / Tab Bar
+ * Cyber Admin Navigation Sidebar / Tab Bar - Production Ready
  */
 const AdminSidebar = ({ activeTab, setActiveTab, counts = {} }) => {
   const tabs = [
     { id: 'overview', label: 'Overview & Charts', icon: BarChart3 },
     { id: 'registrations', label: 'Registrations', icon: Layers, count: counts.registrations },
+    { id: 'checkin', label: 'QR Check-In', icon: QrCode },
+    { id: 'announcements', label: 'Announcements', icon: Bell },
     { id: 'teams', label: 'Teams Roster', icon: Users, count: counts.teams },
     { id: 'users', label: 'User Roles', icon: Shield, count: counts.users },
+    { id: 'audit', label: 'Audit Logs', icon: FileText },
     { id: 'contacts', label: 'Inquiries', icon: MessageSquare, count: counts.contacts },
     { id: 'faqs', label: 'Manage FAQs', icon: HelpCircle },
     { id: 'sponsors', label: 'Manage Sponsors', icon: Award },
@@ -25,9 +28,9 @@ const AdminSidebar = ({ activeTab, setActiveTab, counts = {} }) => {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`px-3.5 py-2 rounded-xl font-semibold transition-all flex items-center gap-2 ${
+            className={`px-3 py-1.5 rounded-xl font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
               isActive
-                ? 'bg-cyan-500 text-[#050816] shadow-[0_0_15px_rgba(0,229,255,0.4)]'
+                ? 'bg-cyan-500 text-[#050816] shadow-[0_0_15px_rgba(0,229,255,0.4)] font-bold'
                 : 'bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white'
             }`}
           >
@@ -50,3 +53,4 @@ const AdminSidebar = ({ activeTab, setActiveTab, counts = {} }) => {
 };
 
 export default AdminSidebar;
+
