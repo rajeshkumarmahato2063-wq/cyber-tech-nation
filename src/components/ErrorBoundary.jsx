@@ -36,6 +36,11 @@ class ErrorBoundary extends React.Component {
               <p className="text-xs text-slate-400 leading-relaxed">
                 An unexpected exception occurred. The runtime state was safely isolated to protect your data.
               </p>
+              {this.state.error?.message && (
+                <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs font-mono text-left overflow-x-auto max-h-32">
+                  <strong>Error:</strong> {this.state.error.message}
+                </div>
+              )}
             </div>
 
             <button

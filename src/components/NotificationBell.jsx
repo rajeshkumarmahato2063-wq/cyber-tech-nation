@@ -11,6 +11,8 @@ const NotificationBell = ({ user }) => {
 
   if (!user) return null;
 
+  const safeNotifications = Array.isArray(notifications) ? notifications : [];
+
   return (
     <div className="relative font-mono">
       <button
@@ -37,10 +39,10 @@ const NotificationBell = ({ user }) => {
           </div>
 
           <div className="space-y-2 mt-3 max-h-72 overflow-y-auto pr-1">
-            {notifications.length === 0 ? (
+            {safeNotifications.length === 0 ? (
               <div className="p-6 text-center text-slate-500 text-[11px]">No notifications in inbox.</div>
             ) : (
-              notifications.map((item) => (
+              safeNotifications.map((item) => (
                 <div
                   key={item.id}
                   className={`p-3 rounded-xl border transition-all space-y-1.5 ${

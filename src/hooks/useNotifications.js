@@ -30,10 +30,21 @@ export const useNotifications = (userId) => {
   }, [userId]);
 
   const loadNotifications = async () => {
-    if (!userId) return;
-    const list = await getUserNotifications(userId);
-    setNotifications(list);
-    setUnreadCount(list.filter(n => !n.read).length);
+    if (!userId) {
+      setNotifications([]);
+      setUnreadCount(0);
+      return;
+    }
+    try {
+      const list = await getUserNotifications(userId);
+      const safeList = Array.isArray(list) ? list : [];
+      setNotifications(safeList);
+      setUnreadCount(safeList.filter((n) => Boolean(n && !n.read)).length);
+    } catch (err) {
+      console.warn('[useNotifications] Fallback:', err);
+      setNotifications([]);
+      setUnreadCount(0);
+    }
   };
 
   const handleMarkRead = async (id) => {
