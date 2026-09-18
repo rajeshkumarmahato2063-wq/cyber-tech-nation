@@ -1,0 +1,24 @@
+{
+  "name": "ZAYATHON 2026 | Cyber-Tech Hackathon",
+  "short_name": "ZAYATHON",
+  "description": "Premier Cyber-Tech National Hackathon Platform. Build, Innovate, Win!",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#050816",
+  "theme_color": "#00E5FF",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "/vite.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/vite.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

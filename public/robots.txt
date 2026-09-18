@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /judge/
+
+Sitemap: https://zayathon.tech/sitemap.xml
