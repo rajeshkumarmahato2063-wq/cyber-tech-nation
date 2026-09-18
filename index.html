@@ -10,6 +10,21 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <script>
+      (function() {
+        try {
+          var saved = localStorage.getItem('zayathon_theme');
+          var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+          if (theme === 'light') {
+            document.documentElement.classList.add('light');
+            document.documentElement.classList.remove('dark');
+          } else {
+            document.documentElement.classList.add('dark');
+            document.documentElement.classList.remove('light');
+          }
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body class="bg-[#050816] text-[#F8FAFC] antialiased selection:bg-[#00E5FF] selection:text-[#050816] min-h-screen overflow-x-hidden">
     <div id="root"></div>
