@@ -7,11 +7,13 @@ import ThemeToggle from './ThemeToggle';
 /**
  * Sticky Glassmorphism Navbar with Mobile Drawer, Active Scroll Highlighting, Auth & Admin Controls
  */
-const Navbar = ({ user, onOpenAuth, onOpenAdmin, onOpenUserDashboard, onLogout }) => {
+const Navbar = ({ user, onOpenAuth, onOpenAdmin, onOpenUserDashboard, onOpenJudgePortal, onOpenLiveDashboard, onLogout }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('hero');
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+
+  const isJudge = user?.profile?.role === 'judge' || user?.user_metadata?.role === 'judge' || user?.profile?.role === 'admin';
 
   const navLinks = [
     { name: 'Home', href: '#hero' },
@@ -99,7 +101,7 @@ const Navbar = ({ user, onOpenAuth, onOpenAdmin, onOpenUserDashboard, onLogout }
                 className={`relative px-4 py-1.5 text-sm font-medium transition-all duration-300 rounded-full ${
                   isActive
                     ? 'text-cyan-400 font-semibold'
-                    : 'text-slate-300 hover:text-white hover:bg-white/5'
+                    : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
                 }`}
               >
                 {isActive && (
@@ -116,17 +118,38 @@ const Navbar = ({ user, onOpenAuth, onOpenAdmin, onOpenUserDashboard, onLogout }
         </nav>
 
         {/* Desktop Action CTA & Theme Toggle */}
-        <div className="hidden md:flex items-center gap-3">
+        <div className="hidden md:flex items-center gap-2.5">
           <ThemeToggle />
+
+          {/* Live Arena Trigger */}
+          <button
+            onClick={onOpenLiveDashboard}
+            className="p-2 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20 transition-all font-mono text-xs font-semibold flex items-center gap-1 cursor-pointer"
+            title="Open Live Broadcast Arena"
+          >
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+            <span>Live Arena</span>
+          </button>
+
+          {/* Judge Portal Trigger */}
+          {isJudge && (
+            <button
+              onClick={onOpenJudgePortal}
+              className="px-3 py-1.5 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 hover:bg-cyan-500/20 transition-all font-mono text-xs font-semibold flex items-center gap-1 cursor-pointer"
+              title="Open Judge Portal"
+            >
+              <span>Judge</span>
+            </button>
+          )}
 
           {/* Admin Dashboard Trigger */}
           {isAdmin && (
             <button
               onClick={onOpenAdmin}
-              className="p-2.5 rounded-xl bg-purple-500/10 border border-purple-500/30 text-purple-300 hover:bg-purple-500/20 transition-all font-mono text-xs font-semibold flex items-center gap-1.5"
+              className="px-3 py-1.5 rounded-xl bg-purple-500/10 border border-purple-500/30 text-purple-300 hover:bg-purple-500/20 transition-all font-mono text-xs font-semibold flex items-center gap-1 cursor-pointer"
               title="Open Admin Dashboard"
             >
-              <ShieldAlert className="w-4 h-4 text-purple-400" />
+              <ShieldAlert className="w-3.5 h-3.5 text-purple-400" />
               <span>Admin</span>
             </button>
           )}

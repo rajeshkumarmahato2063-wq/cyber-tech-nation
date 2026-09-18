@@ -27,8 +27,11 @@ import FAQ from './components/FAQ';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 
+import JudgePortal from './components/JudgePortal';
+import LiveEventDashboard from './components/LiveEventDashboard';
+
 /**
- * ZAYATHON Application Shell
+ * ZAYATHON Application Shell - Production Ready
  */
 function App() {
   const [initialLoading, setInitialLoading] = useState(true);
@@ -36,6 +39,8 @@ function App() {
   const [authModalMode, setAuthModalMode] = useState('login'); // 'login' | 'signup' | 'forgot'
   const [adminDashboardOpen, setAdminDashboardOpen] = useState(false);
   const [userDashboardOpen, setUserDashboardOpen] = useState(false);
+  const [judgePortalOpen, setJudgePortalOpen] = useState(false);
+  const [liveDashboardOpen, setLiveDashboardOpen] = useState(false);
 
   // Initialize Auth state via custom useAuth hook
   const { user, profile, isAuthenticated, isAdmin, signOut, refreshUser } = useAuth();
@@ -73,12 +78,14 @@ function App() {
         {/* 5. Ambient Cyber Background Lighting & Orbs */}
         <BackgroundDecorations />
 
-        {/* 6. Sticky Navbar with Auth Controls & Theme Toggle */}
+        {/* 6. Sticky Navbar with Auth Controls, Judge Portal & Theme Toggle */}
         <Navbar
           user={user}
           onOpenAuth={handleOpenAuth}
           onOpenAdmin={() => setAdminDashboardOpen(true)}
           onOpenUserDashboard={() => setUserDashboardOpen(true)}
+          onOpenJudgePortal={() => setJudgePortalOpen(true)}
+          onOpenLiveDashboard={() => setLiveDashboardOpen(true)}
           onLogout={handleLogout}
         />
 
@@ -128,9 +135,23 @@ function App() {
           isOpen={adminDashboardOpen}
           onClose={() => setAdminDashboardOpen(false)}
         />
+
+        {/* 14. Judge Evaluation Portal Modal */}
+        <JudgePortal
+          isOpen={judgePortalOpen}
+          onClose={() => setJudgePortalOpen(false)}
+          user={user}
+        />
+
+        {/* 15. Public Live Event Broadcast Arena Modal */}
+        <LiveEventDashboard
+          isOpen={liveDashboardOpen}
+          onClose={() => setLiveDashboardOpen(false)}
+        />
       </div>
     </>
   );
 }
 
 export default App;
+

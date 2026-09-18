@@ -4,6 +4,8 @@ import { X, Users, CheckCircle, Clock, XCircle, FileText, Presentation, ShieldCh
 import { registrationService } from '../services/registration';
 import { generateCertificatePDF } from '../services/certificate';
 import { getAnnouncements } from '../services/announcements';
+import AIProjectAssistant from './AIProjectAssistant';
+
 
 /**
  * Cyber User Participant Dashboard Modal - Production Ready
@@ -356,6 +358,9 @@ const UserDashboard = ({ isOpen, onClose, user }) => {
                   ))}
                 </div>
               </div>
+
+              {/* AI Copilot Section */}
+              <AIProjectAssistant user={user} />
             </div>
           )}
         </motion.div>

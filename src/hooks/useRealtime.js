@@ -2,36 +2,26 @@ import { useEffect } from 'react';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
 
 /**
- * Custom useRealtime Hook - Listens to Supabase Realtime channel updates
- * 
- * @param {Array<string>} tables List of table names to listen to
- * @param {Function} onUpdate Callback function when changes occur
+ * Reusable Supabase Realtime Subscription Hook
+ * @param {string} table - Database table name
+ * @param {Function} callback - Event trigger callback
  */
-export const useRealtime = (tables = ['registrations', 'contacts', 'teams'], onUpdate) => {
+
+export const useRealtime = (table, callback) => {
   useEffect(() => {
-    if (!isSupabaseConfigured() || !tables || tables.length === 0 || typeof onUpdate !== 'function') {
-      return;
-    }
+    if (!isSupabaseConfigured() || !table) return;
 
-    const channelName = `realtime-${tables.join('-')}-${Date.now()}`;
-    let channel = supabase.channel(channelName);
-
-    tables.forEach((table) => {
-      channel = channel.on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table },
-        (payload) => {
-          onUpdate(payload);
-        }
-      );
-    });
-
-    channel.subscribe();
+    const channel = supabase
+      .channel(`realtime-${table}`)
+      .on('postgres_changes', { event: '*', schema: 'public', table }, (payload) => {
+        if (callback) callback(payload);
+      })
+      .subscribe();
 
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [tables, onUpdate]);
+  }, [table, callback]);
 };
 
 export default useRealtime;
