@@ -29,6 +29,7 @@ import Footer from './components/Footer';
 
 import JudgePortal from './components/JudgePortal';
 import LiveEventDashboard from './components/LiveEventDashboard';
+import MaintenanceBanner from './components/MaintenanceBanner';
 
 /**
  * ZAYATHON Application Shell - Production Ready
