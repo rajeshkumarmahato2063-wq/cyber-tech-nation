@@ -1,19 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { AnimatePresence } from 'framer-motion';
 
+import Layout from './components/Layout';
 import Loader from './components/Loader';
-import ParticlesBackground from './components/ParticlesBackground';
-import CursorGlow from './components/CursorGlow';
-import ScrollProgress from './components/ScrollProgress';
-import BackToTop from './components/BackToTop';
-import Navbar from './components/Navbar';
-import BackgroundDecorations from './components/ui/BackgroundDecorations';
-import ChatWidget from './components/ChatWidget';
+import SectionErrorBoundary from './components/SectionErrorBoundary';
 import AuthModal from './components/AuthModal';
 import AdminDashboard from './components/AdminDashboard';
 import UserDashboard from './components/UserDashboard';
+import JudgePortal from './components/JudgePortal';
+import LiveEventDashboard from './components/LiveEventDashboard';
 import useAuth from './hooks/useAuth';
 
+// Homepage Sections
 import Hero from './components/Hero';
 import About from './components/About';
 import Stats from './components/Stats';
@@ -25,12 +23,6 @@ import Team from './components/Team';
 import Register from './components/Register';
 import FAQ from './components/FAQ';
 import Contact from './components/Contact';
-import Footer from './components/Footer';
-
-import JudgePortal from './components/JudgePortal';
-import LiveEventDashboard from './components/LiveEventDashboard';
-import MaintenanceBanner from './components/MaintenanceBanner';
-import EmergencyBroadcastBanner from './components/EmergencyBroadcastBanner';
 
 // Multi-Event & Career Platform Pages
 import EventsPage from './pages/Events';
@@ -44,12 +36,13 @@ import NetworkingHubPage from './pages/Networking';
 import LeaderboardPage from './pages/Leaderboard';
 
 /**
- * ZAYATHON Application Shell - Hackathon & Career Platform Ready
+ * ZAYATHON Application Root Shell
+ * Multi-Event SaaS & AI Career Platform with Fault-Tolerant Section Boundaries
  */
 function App() {
   const [initialLoading, setInitialLoading] = useState(true);
   const [authModalOpen, setAuthModalOpen] = useState(false);
-  const [authModalMode, setAuthModalMode] = useState('login'); // 'login' | 'signup' | 'forgot'
+  const [authModalMode, setAuthModalMode] = useState('login');
   const [adminDashboardOpen, setAdminDashboardOpen] = useState(false);
   const [userDashboardOpen, setUserDashboardOpen] = useState(false);
   const [judgePortalOpen, setJudgePortalOpen] = useState(false);
@@ -60,8 +53,8 @@ function App() {
   const [selectedRegisterEvent, setSelectedRegisterEvent] = useState(null);
   const [chatTargetUserId, setChatTargetUserId] = useState(null);
 
-  // Initialize Auth state via custom useAuth hook
-  const { user, profile, isAuthenticated, isAdmin, signOut, refreshUser } = useAuth();
+  // Auth Hook
+  const { user, profile, isAdmin, signOut, refreshUser } = useAuth();
 
   useEffect(() => {
     const handlePopState = () => {
@@ -107,158 +100,178 @@ function App() {
   };
 
   const isOrganizerOrAdmin = isAdmin || profile?.role === 'organizer' || user?.user_metadata?.role === 'organizer';
-
-  // Normalize route to ignore trailing slash (e.g. /events/ -> /events)
   const route = (currentRoute.length > 1 && currentRoute.endsWith('/')) ? currentRoute.slice(0, -1) : currentRoute;
-
-  // Determine current profile username from route if viewing /profile/:username or /portfolio/:username
   const isProfileRoute = route.startsWith('/profile') || route.startsWith('/portfolio');
   const profileUsername = isProfileRoute ? (route.split('/')[2] || 'rajesh-mahato') : 'rajesh-mahato';
 
   return (
-    <>
-      {/* 1. Initial Animated Boot Loader */}
+    <Layout
+      user={user}
+      onOpenAuth={handleOpenAuth}
+      onOpenAdmin={() => setAdminDashboardOpen(true)}
+      onOpenUserDashboard={() => setUserDashboardOpen(true)}
+      onOpenJudgePortal={() => setJudgePortalOpen(true)}
+      onOpenLiveDashboard={() => setLiveDashboardOpen(true)}
+      onLogout={handleLogout}
+      onNavigate={handleNavigate}
+      currentRoute={currentRoute}
+    >
+      {/* Initial Boot Loader Animation */}
       <AnimatePresence>
         {initialLoading && <Loader onComplete={() => setInitialLoading(false)} />}
       </AnimatePresence>
 
-      {/* 2. Top Window Scroll Progress Bar */}
-      <ScrollProgress />
+      {/* Main View Router */}
+      {route === '/events' ? (
+        <SectionErrorBoundary name="EventsPage">
+          <EventsPage
+            onViewEventDetails={(slug) => handleNavigate(`/events/${slug}`)}
+            onOpenRegister={handleOpenRegisterForEvent}
+            onOpenCreateEvent={() => setAdminDashboardOpen(true)}
+            isAdminOrOrganizer={isOrganizerOrAdmin}
+          />
+        </SectionErrorBoundary>
+      ) : route.startsWith('/events/') ? (
+        <SectionErrorBoundary name="EventDetailsPage">
+          <EventDetailsPage
+            slug={route.replace('/events/', '')}
+            onBack={() => handleNavigate('/events')}
+            onOpenRegister={handleOpenRegisterForEvent}
+          />
+        </SectionErrorBoundary>
+      ) : route === '/archive' ? (
+        <SectionErrorBoundary name="EventArchivePage">
+          <EventArchivePage />
+        </SectionErrorBoundary>
+      ) : route === '/organizer' ? (
+        <SectionErrorBoundary name="OrganizerDashboardPage">
+          <OrganizerDashboardPage user={user} />
+        </SectionErrorBoundary>
+      ) : isProfileRoute ? (
+        <SectionErrorBoundary name="PortfolioPage">
+          <PortfolioPage
+            username={profileUsername}
+            currentUser={user}
+            onOpenChat={handleOpenChatWithUser}
+          />
+        </SectionErrorBoundary>
+      ) : route === '/resume-builder' ? (
+        <SectionErrorBoundary name="ResumeBuilderPage">
+          <ResumeBuilderPage user={user} />
+        </SectionErrorBoundary>
+      ) : route === '/recruiter' ? (
+        <SectionErrorBoundary name="RecruiterDashboardPage">
+          <RecruiterDashboardPage
+            onViewPortfolio={(uname) => handleNavigate(`/profile/${uname}`)}
+          />
+        </SectionErrorBoundary>
+      ) : route === '/networking' ? (
+        <SectionErrorBoundary name="NetworkingHubPage">
+          <NetworkingHubPage
+            currentUser={user}
+            targetUserId={chatTargetUserId}
+          />
+        </SectionErrorBoundary>
+      ) : route === '/leaderboard' ? (
+        <SectionErrorBoundary name="LeaderboardPage">
+          <LeaderboardPage
+            onViewPortfolio={(uname) => handleNavigate(`/profile/${uname}`)}
+          />
+        </SectionErrorBoundary>
+      ) : (
+        /* Flagship Home Page with Independent Fault-Tolerant Section Boundaries */
+        <>
+          <SectionErrorBoundary name="Hero">
+            <Hero />
+          </SectionErrorBoundary>
 
-      {/* 3. Custom Desktop Glowing Pointer */}
-      <CursorGlow />
+          <SectionErrorBoundary name="About">
+            <About />
+          </SectionErrorBoundary>
 
-      {/* Maintenance Mode Banner */}
-      <MaintenanceBanner />
+          <SectionErrorBoundary name="Stats">
+            <Stats />
+          </SectionErrorBoundary>
 
-      {/* Realtime Emergency Operations Broadcast Banner */}
-      <EmergencyBroadcastBanner />
+          <SectionErrorBoundary name="Domains">
+            <Domains />
+          </SectionErrorBoundary>
 
-      <div className="relative min-h-screen bg-[var(--bg,#050816)] text-[var(--text,#F8FAFC)] flex flex-col font-sans overflow-x-hidden selection:bg-[#00E5FF] selection:text-[#050816] theme-transition">
-        {/* 4. Canvas Particle Network Background */}
-        <ParticlesBackground />
+          <SectionErrorBoundary name="Timeline">
+            <Timeline />
+          </SectionErrorBoundary>
 
-        {/* 5. Ambient Cyber Background Lighting & Orbs */}
-        <BackgroundDecorations />
+          <SectionErrorBoundary name="Prizes">
+            <Prizes />
+          </SectionErrorBoundary>
 
-        {/* 6. Sticky Navbar with Auth Controls, Career Platform Routing & Theme Toggle */}
-        <Navbar
-          user={user}
-          onOpenAuth={handleOpenAuth}
-          onOpenAdmin={() => setAdminDashboardOpen(true)}
-          onOpenUserDashboard={() => setUserDashboardOpen(true)}
-          onOpenJudgePortal={() => setJudgePortalOpen(true)}
-          onOpenLiveDashboard={() => setLiveDashboardOpen(true)}
-          onLogout={handleLogout}
-          onNavigate={handleNavigate}
-          currentRoute={currentRoute}
-        />
+          <SectionErrorBoundary name="Sponsors">
+            <Sponsors />
+          </SectionErrorBoundary>
 
-        {/* 7. Main Application Routing View */}
-        <main className="flex-1 z-10">
-          {route === '/events' ? (
-            <EventsPage
-              onViewEventDetails={(slug) => handleNavigate(`/events/${slug}`)}
-              onOpenRegister={handleOpenRegisterForEvent}
-              onOpenCreateEvent={() => setAdminDashboardOpen(true)}
-              isAdminOrOrganizer={isOrganizerOrAdmin}
-            />
-          ) : route.startsWith('/events/') ? (
-            <EventDetailsPage
-              slug={route.replace('/events/', '')}
-              onBack={() => handleNavigate('/events')}
-              onOpenRegister={handleOpenRegisterForEvent}
-            />
-          ) : route === '/archive' ? (
-            <EventArchivePage />
-          ) : route === '/organizer' ? (
-            <OrganizerDashboardPage user={user} />
-          ) : isProfileRoute ? (
-            <PortfolioPage
-              username={profileUsername}
-              currentUser={user}
-              onOpenChat={handleOpenChatWithUser}
-            />
-          ) : route === '/resume-builder' ? (
-            <ResumeBuilderPage user={user} />
-          ) : route === '/recruiter' ? (
-            <RecruiterDashboardPage
-              onViewPortfolio={(uname) => handleNavigate(`/profile/${uname}`)}
-            />
-          ) : route === '/networking' ? (
-            <NetworkingHubPage
-              currentUser={user}
-              targetUserId={chatTargetUserId}
-            />
-          ) : route === '/leaderboard' ? (
-            <LeaderboardPage
-              onViewPortfolio={(uname) => handleNavigate(`/profile/${uname}`)}
-            />
-          ) : (
-            /* Default Flagship Home Page View */
-            <>
-              <Hero />
-              <About />
-              <Stats />
-              <Domains />
-              <Timeline />
-              <Prizes />
-              <Sponsors />
-              <Team />
-              <Register selectedEvent={selectedRegisterEvent} eventId={selectedRegisterEvent?.id} />
-              <FAQ />
-              <Contact />
-            </>
-          )}
-        </main>
+          <SectionErrorBoundary name="Team">
+            <Team />
+          </SectionErrorBoundary>
 
-        {/* 8. Footer */}
-        <Footer />
+          <SectionErrorBoundary name="Register">
+            <Register selectedEvent={selectedRegisterEvent} eventId={selectedRegisterEvent?.id} />
+          </SectionErrorBoundary>
 
-        {/* 9. Floating Back To Top Button */}
-        <BackToTop />
+          <SectionErrorBoundary name="FAQ">
+            <FAQ />
+          </SectionErrorBoundary>
 
-        {/* 10. Live AI Chat Assistant Widget */}
-        <ChatWidget />
+          <SectionErrorBoundary name="Contact">
+            <Contact />
+          </SectionErrorBoundary>
+        </>
+      )}
 
-        {/* 11. Auth Modal (Sign In / Sign Up / Forgot Password) */}
+      {/* Auth Modal */}
+      <SectionErrorBoundary name="AuthModal">
         <AuthModal
           isOpen={authModalOpen}
           onClose={() => setAuthModalOpen(false)}
           initialMode={authModalMode}
-          onAuthSuccess={() => {
-            refreshUser();
-          }}
+          onAuthSuccess={() => refreshUser()}
         />
+      </SectionErrorBoundary>
 
-        {/* 12. User Participant Dashboard Modal */}
+      {/* Participant User Dashboard */}
+      <SectionErrorBoundary name="UserDashboard">
         <UserDashboard
           isOpen={userDashboardOpen}
           onClose={() => setUserDashboardOpen(false)}
           user={user}
         />
+      </SectionErrorBoundary>
 
-        {/* 13. Admin Command Center Dashboard Modal */}
+      {/* Admin Dashboard */}
+      <SectionErrorBoundary name="AdminDashboard">
         <AdminDashboard
           isOpen={adminDashboardOpen}
           onClose={() => setAdminDashboardOpen(false)}
         />
+      </SectionErrorBoundary>
 
-        {/* 14. Judge Evaluation Portal Modal */}
+      {/* Judge Evaluation Portal */}
+      <SectionErrorBoundary name="JudgePortal">
         <JudgePortal
           isOpen={judgePortalOpen}
           onClose={() => setJudgePortalOpen(false)}
           user={user}
         />
+      </SectionErrorBoundary>
 
-        {/* 15. Public Live Event Broadcast Arena Modal */}
+      {/* Live Broadcast Arena */}
+      <SectionErrorBoundary name="LiveEventDashboard">
         <LiveEventDashboard
           isOpen={liveDashboardOpen}
           onClose={() => setLiveDashboardOpen(false)}
           user={user}
         />
-      </div>
-    </>
+      </SectionErrorBoundary>
+    </Layout>
   );
 }
 
