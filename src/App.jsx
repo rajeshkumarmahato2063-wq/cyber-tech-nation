@@ -108,9 +108,12 @@ function App() {
 
   const isOrganizerOrAdmin = isAdmin || profile?.role === 'organizer' || user?.user_metadata?.role === 'organizer';
 
-  // Determine current profile username from route if viewing /profile/:username
-  const isProfileRoute = currentRoute.startsWith('/profile') || currentRoute.startsWith('/portfolio');
-  const profileUsername = isProfileRoute ? (currentRoute.split('/')[2] || 'rajesh-mahato') : 'rajesh-mahato';
+  // Normalize route to ignore trailing slash (e.g. /events/ -> /events)
+  const route = (currentRoute.length > 1 && currentRoute.endsWith('/')) ? currentRoute.slice(0, -1) : currentRoute;
+
+  // Determine current profile username from route if viewing /profile/:username or /portfolio/:username
+  const isProfileRoute = route.startsWith('/profile') || route.startsWith('/portfolio');
+  const profileUsername = isProfileRoute ? (route.split('/')[2] || 'rajesh-mahato') : 'rajesh-mahato';
 
   return (
     <>
@@ -153,22 +156,22 @@ function App() {
 
         {/* 7. Main Application Routing View */}
         <main className="flex-1 z-10">
-          {currentRoute === '/events' ? (
+          {route === '/events' ? (
             <EventsPage
               onViewEventDetails={(slug) => handleNavigate(`/events/${slug}`)}
               onOpenRegister={handleOpenRegisterForEvent}
               onOpenCreateEvent={() => setAdminDashboardOpen(true)}
               isAdminOrOrganizer={isOrganizerOrAdmin}
             />
-          ) : currentRoute.startsWith('/events/') ? (
+          ) : route.startsWith('/events/') ? (
             <EventDetailsPage
-              slug={currentRoute.replace('/events/', '')}
+              slug={route.replace('/events/', '')}
               onBack={() => handleNavigate('/events')}
               onOpenRegister={handleOpenRegisterForEvent}
             />
-          ) : currentRoute === '/archive' ? (
+          ) : route === '/archive' ? (
             <EventArchivePage />
-          ) : currentRoute === '/organizer' ? (
+          ) : route === '/organizer' ? (
             <OrganizerDashboardPage user={user} />
           ) : isProfileRoute ? (
             <PortfolioPage
@@ -176,18 +179,18 @@ function App() {
               currentUser={user}
               onOpenChat={handleOpenChatWithUser}
             />
-          ) : currentRoute === '/resume-builder' ? (
+          ) : route === '/resume-builder' ? (
             <ResumeBuilderPage user={user} />
-          ) : currentRoute === '/recruiter' ? (
+          ) : route === '/recruiter' ? (
             <RecruiterDashboardPage
               onViewPortfolio={(uname) => handleNavigate(`/profile/${uname}`)}
             />
-          ) : currentRoute === '/networking' ? (
+          ) : route === '/networking' ? (
             <NetworkingHubPage
               currentUser={user}
               targetUserId={chatTargetUserId}
             />
-          ) : currentRoute === '/leaderboard' ? (
+          ) : route === '/leaderboard' ? (
             <LeaderboardPage
               onViewPortfolio={(uname) => handleNavigate(`/profile/${uname}`)}
             />
