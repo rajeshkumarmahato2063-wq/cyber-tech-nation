@@ -31,6 +31,7 @@ const Navbar = ({
   const navLinks = [
     { name: 'Home', href: '#hero', route: '/' },
     { name: 'Events', href: '/events', route: '/events' },
+    { name: 'Team Match', href: '/team-match', route: '/team-match' },
     { name: 'Portfolios', href: '/profile/rajesh-mahato', route: '/profile' },
     { name: 'AI Resume', href: '/resume-builder', route: '/resume-builder' },
     { name: 'Recruiters', href: '/recruiter', route: '/recruiter' },

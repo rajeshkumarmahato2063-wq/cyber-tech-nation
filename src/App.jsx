@@ -21,9 +21,9 @@ import EventArchivePage from './pages/EventArchive';
 import OrganizerDashboardPage from './pages/Organizer';
 import PortfolioPage from './pages/Portfolio';
 import ResumeBuilderPage from './pages/ResumeBuilder';
-import RecruiterDashboardPage from './pages/Recruiter';
 import NetworkingHubPage from './pages/Networking';
 import LeaderboardPage from './pages/Leaderboard';
+import TeamMatchPage from './pages/TeamMatch';
 
 /**
  * ZAYATHON Application Root Shell
@@ -167,6 +167,10 @@ function App() {
           <LeaderboardPage
             onViewPortfolio={(uname) => handleNavigate(`/profile/${uname}`)}
           />
+        </SectionErrorBoundary>
+      ) : route === '/team-match' ? (
+        <SectionErrorBoundary name="TeamMatchPage">
+          <TeamMatchPage />
         </SectionErrorBoundary>
       ) : (
         /* Flagship Home Page Component */
