@@ -11,18 +11,8 @@ import JudgePortal from './components/JudgePortal';
 import LiveEventDashboard from './components/LiveEventDashboard';
 import useAuth from './hooks/useAuth';
 
-// Homepage Sections
-import Hero from './components/Hero';
-import About from './components/About';
-import Stats from './components/Stats';
-import Domains from './components/Domains';
-import Timeline from './components/Timeline';
-import Prizes from './components/Prizes';
-import Sponsors from './components/Sponsors';
-import Team from './components/Team';
-import Register from './components/Register';
-import FAQ from './components/FAQ';
-import Contact from './components/Contact';
+// Dedicated Homepage View
+import HomePage from './pages/Home';
 
 // Multi-Event & Career Platform Pages
 import EventsPage from './pages/Events';
@@ -37,7 +27,7 @@ import LeaderboardPage from './pages/Leaderboard';
 
 /**
  * ZAYATHON Application Root Shell
- * Multi-Event SaaS & AI Career Platform with Fault-Tolerant Section Boundaries
+ * Multi-Event SaaS & AI Career Platform
  */
 function App() {
   const [initialLoading, setInitialLoading] = useState(true);
@@ -179,52 +169,10 @@ function App() {
           />
         </SectionErrorBoundary>
       ) : (
-        /* Flagship Home Page with Independent Fault-Tolerant Section Boundaries */
-        <>
-          <SectionErrorBoundary name="Hero">
-            <Hero />
-          </SectionErrorBoundary>
-
-          <SectionErrorBoundary name="About">
-            <About />
-          </SectionErrorBoundary>
-
-          <SectionErrorBoundary name="Stats">
-            <Stats />
-          </SectionErrorBoundary>
-
-          <SectionErrorBoundary name="Domains">
-            <Domains />
-          </SectionErrorBoundary>
-
-          <SectionErrorBoundary name="Timeline">
-            <Timeline />
-          </SectionErrorBoundary>
-
-          <SectionErrorBoundary name="Prizes">
-            <Prizes />
-          </SectionErrorBoundary>
-
-          <SectionErrorBoundary name="Sponsors">
-            <Sponsors />
-          </SectionErrorBoundary>
-
-          <SectionErrorBoundary name="Team">
-            <Team />
-          </SectionErrorBoundary>
-
-          <SectionErrorBoundary name="Register">
-            <Register selectedEvent={selectedRegisterEvent} eventId={selectedRegisterEvent?.id} />
-          </SectionErrorBoundary>
-
-          <SectionErrorBoundary name="FAQ">
-            <FAQ />
-          </SectionErrorBoundary>
-
-          <SectionErrorBoundary name="Contact">
-            <Contact />
-          </SectionErrorBoundary>
-        </>
+        /* Flagship Home Page Component */
+        <SectionErrorBoundary name="HomePage">
+          <HomePage selectedRegisterEvent={selectedRegisterEvent} />
+        </SectionErrorBoundary>
       )}
 
       {/* Auth Modal */}
