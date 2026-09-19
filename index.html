@@ -14,7 +14,7 @@
       (function() {
         try {
           var saved = localStorage.getItem('zayathon_theme');
-          var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+          var theme = saved || 'dark';
           if (theme === 'light') {
             document.documentElement.classList.add('light');
             document.documentElement.classList.remove('dark');
