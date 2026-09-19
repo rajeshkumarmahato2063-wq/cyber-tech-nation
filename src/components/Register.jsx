@@ -50,7 +50,7 @@ const YEAR_OPTIONS = [
   'Postgraduate / Other'
 ];
 
-const Register = () => {
+const Register = ({ eventId, selectedEvent }) => {
   // Current Form Step (1: Leader, 2: Members, 3: Review, 4: Success)
   const [step, setStep] = useState(1);
 
@@ -229,6 +229,7 @@ const Register = () => {
       const reg = await registrationService.createRegistration({
         userId: null,
         teamId: team.id,
+        eventId: eventId || selectedEvent?.id || 'a0000000-0000-0000-0000-000000000001',
         innovationDomain: formData.domain,
         projectTitle: `${formData.teamName} - ${formData.domain} Project`,
         projectDescription: `Registered by ${formData.leaderName} (${formData.email}) from ${formData.college}`,

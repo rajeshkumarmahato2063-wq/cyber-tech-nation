@@ -12,10 +12,7 @@ import AIProjectAssistant from './AIProjectAssistant';
  */
 const UserDashboard = ({ isOpen, onClose, user }) => {
   const [registration, setRegistration] = useState(null);
-  const [announcements, setAnnouncements] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [downloadingCert, setDownloadingCert] = useState(false);
-  const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'qr' | 'announcements'
+  const [allRegistrations, setAllRegistrations] = useState([]);
 
   useEffect(() => {
     if (isOpen && user?.id) {
@@ -34,8 +31,15 @@ const UserDashboard = ({ isOpen, onClose, user }) => {
     if (!user?.id) return;
     setLoading(true);
     try {
-      const reg = await registrationService.getUserRegistration(user.id);
-      setRegistration(reg);
+      const regs = await registrationService.getAllUserRegistrations(user.id);
+      setAllRegistrations(regs);
+      if (regs && regs.length > 0) {
+        setRegistration(regs[0]);
+      } else {
+        const single = await registrationService.getUserRegistration(user.id);
+        setRegistration(single);
+        if (single) setAllRegistrations([single]);
+      }
     } catch (err) {
       console.warn('Error loading registration:', err.message);
     } finally {
@@ -115,35 +119,25 @@ const UserDashboard = ({ isOpen, onClose, user }) => {
               </div>
             </div>
 
-            {/* Dashboard Tabs */}
-            {registration && (
-              <div className="flex items-center gap-2 bg-white/5 p-1 rounded-xl border border-white/10 text-xs font-mono">
+          {/* Event Registration Switcher if registered for multiple events */}
+          {allRegistrations.length > 1 && (
+            <div className="flex items-center gap-2 overflow-x-auto pb-2 border-b border-white/10 text-xs font-mono">
+              <span className="text-slate-400 font-bold shrink-0">MY EVENT REGISTRATIONS:</span>
+              {allRegistrations.map((reg) => (
                 <button
-                  onClick={() => setActiveTab('overview')}
-                  className={`px-3 py-1.5 rounded-lg transition-all ${
-                    activeTab === 'overview' ? 'bg-cyan-500/20 text-cyan-400 font-bold border border-cyan-500/40' : 'text-slate-400 hover:text-white'
+                  key={reg.id}
+                  onClick={() => setRegistration(reg)}
+                  className={`px-3 py-1 rounded-xl transition-all whitespace-nowrap cursor-pointer ${
+                    registration?.id === reg.id
+                      ? 'bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/40 shadow-[0_0_12px_rgba(0,229,255,0.2)]'
+                      : 'bg-white/5 border border-white/10 text-slate-400 hover:text-white'
                   }`}
                 >
-                  Overview
+                  📌 {reg.events?.name || 'Hackathon Event'}
                 </button>
-                <button
-                  onClick={() => setActiveTab('qr')}
-                  className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 ${
-                    activeTab === 'qr' ? 'bg-cyan-500/20 text-cyan-400 font-bold border border-cyan-500/40' : 'text-slate-400 hover:text-white'
-                  }`}
-                >
-                  <QrCode className="w-3.5 h-3.5" /> Event Pass
-                </button>
-                <button
-                  onClick={() => setActiveTab('announcements')}
-                  className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 ${
-                    activeTab === 'announcements' ? 'bg-cyan-500/20 text-cyan-400 font-bold border border-cyan-500/40' : 'text-slate-400 hover:text-white'
-                  }`}
-                >
-                  <Bell className="w-3.5 h-3.5" /> Notice Board ({announcements.length})
-                </button>
-              </div>
-            )}
+              ))}
+            </div>
+          )}
           </div>
 
           {loading ? (

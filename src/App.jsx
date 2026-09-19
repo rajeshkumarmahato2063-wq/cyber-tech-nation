@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AnimatePresence } from 'framer-motion';
 
 import Loader from './components/Loader';
@@ -32,8 +32,14 @@ import LiveEventDashboard from './components/LiveEventDashboard';
 import MaintenanceBanner from './components/MaintenanceBanner';
 import EmergencyBroadcastBanner from './components/EmergencyBroadcastBanner';
 
+// Multi-Event Platform Pages
+import EventsPage from './pages/Events';
+import EventDetailsPage from './pages/EventDetails';
+import EventArchivePage from './pages/EventArchive';
+import OrganizerDashboardPage from './pages/Organizer';
+
 /**
- * ZAYATHON Application Shell - Production Ready
+ * ZAYATHON Application Shell - Multi-Event Platform Ready
  */
 function App() {
   const [initialLoading, setInitialLoading] = useState(true);
@@ -44,8 +50,26 @@ function App() {
   const [judgePortalOpen, setJudgePortalOpen] = useState(false);
   const [liveDashboardOpen, setLiveDashboardOpen] = useState(false);
 
+  // Client-Side Routing State
+  const [currentRoute, setCurrentRoute] = useState(window.location.pathname || '/');
+  const [selectedRegisterEvent, setSelectedRegisterEvent] = useState(null);
+
   // Initialize Auth state via custom useAuth hook
   const { user, profile, isAuthenticated, isAdmin, signOut, refreshUser } = useAuth();
+
+  useEffect(() => {
+    const handlePopState = () => {
+      setCurrentRoute(window.location.pathname || '/');
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  const handleNavigate = (path) => {
+    window.history.pushState({}, '', path);
+    setCurrentRoute(path);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const handleOpenAuth = (mode = 'login') => {
     setAuthModalMode(mode);
@@ -59,6 +83,19 @@ function App() {
       console.error('Logout error:', err.message);
     }
   };
+
+  const handleOpenRegisterForEvent = (evt) => {
+    setSelectedRegisterEvent(evt);
+    if (currentRoute !== '/') {
+      handleNavigate('/');
+    }
+    setTimeout(() => {
+      const elem = document.getElementById('register');
+      if (elem) elem.scrollIntoView({ behavior: 'smooth' });
+    }, 150);
+  };
+
+  const isOrganizerOrAdmin = isAdmin || profile?.role === 'organizer' || user?.user_metadata?.role === 'organizer';
 
   return (
     <>
@@ -86,7 +123,7 @@ function App() {
         {/* 5. Ambient Cyber Background Lighting & Orbs */}
         <BackgroundDecorations />
 
-        {/* 6. Sticky Navbar with Auth Controls, Judge Portal & Theme Toggle */}
+        {/* 6. Sticky Navbar with Auth Controls, Multi-Event Routing & Theme Toggle */}
         <Navbar
           user={user}
           onOpenAuth={handleOpenAuth}
@@ -95,21 +132,45 @@ function App() {
           onOpenJudgePortal={() => setJudgePortalOpen(true)}
           onOpenLiveDashboard={() => setLiveDashboardOpen(true)}
           onLogout={handleLogout}
+          onNavigate={handleNavigate}
+          currentRoute={currentRoute}
         />
 
-        {/* 7. Main Application Flow */}
+        {/* 7. Main Application Routing View */}
         <main className="flex-1 z-10">
-          <Hero />
-          <About />
-          <Stats />
-          <Domains />
-          <Timeline />
-          <Prizes />
-          <Sponsors />
-          <Team />
-          <Register />
-          <FAQ />
-          <Contact />
+          {currentRoute === '/events' ? (
+            <EventsPage
+              onViewEventDetails={(slug) => handleNavigate(`/events/${slug}`)}
+              onOpenRegister={handleOpenRegisterForEvent}
+              onOpenCreateEvent={() => setAdminDashboardOpen(true)}
+              isAdminOrOrganizer={isOrganizerOrAdmin}
+            />
+          ) : currentRoute.startsWith('/events/') ? (
+            <EventDetailsPage
+              slug={currentRoute.replace('/events/', '')}
+              onBack={() => handleNavigate('/events')}
+              onOpenRegister={handleOpenRegisterForEvent}
+            />
+          ) : currentRoute === '/archive' ? (
+            <EventArchivePage />
+          ) : currentRoute === '/organizer' ? (
+            <OrganizerDashboardPage user={user} />
+          ) : (
+            /* Default Flagship Home Page View */
+            <>
+              <Hero />
+              <About />
+              <Stats />
+              <Domains />
+              <Timeline />
+              <Prizes />
+              <Sponsors />
+              <Team />
+              <Register selectedEvent={selectedRegisterEvent} eventId={selectedRegisterEvent?.id} />
+              <FAQ />
+              <Contact />
+            </>
+          )}
         </main>
 
         {/* 8. Footer */}
@@ -163,4 +224,3 @@ function App() {
 }
 
 export default App;
-

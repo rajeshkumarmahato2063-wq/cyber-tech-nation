@@ -9,23 +9,37 @@ import NotificationBell from './NotificationBell';
 /**
  * Sticky Glassmorphism Navbar with Mobile Drawer, Active Scroll Highlighting, Auth & Admin Controls
  */
-const Navbar = ({ user, onOpenAuth, onOpenAdmin, onOpenUserDashboard, onOpenJudgePortal, onOpenLiveDashboard, onLogout }) => {
+const Navbar = ({
+  user,
+  onOpenAuth,
+  onOpenAdmin,
+  onOpenUserDashboard,
+  onOpenJudgePortal,
+  onOpenLiveDashboard,
+  onLogout,
+  onNavigate,
+  currentRoute = '/'
+}) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('hero');
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
 
   const isJudge = user?.profile?.role === 'judge' || user?.user_metadata?.role === 'judge' || user?.profile?.role === 'admin';
+  const isAdmin = user?.profile?.role === 'admin' || user?.profile?.role === 'organizer' || user?.user_metadata?.role === 'admin';
 
   const navLinks = [
-    { name: 'Home', href: '#hero' },
-    { name: 'About', href: '#about' },
-    { name: 'Domains', href: '#domains' },
-    { name: 'Timeline', href: '#timeline' },
-    { name: 'Prizes', href: '#prizes' },
-    { name: 'Register', href: '#register' },
-    { name: 'Contact', href: '#contact' },
+    { name: 'Home', href: '#hero', route: '/' },
+    { name: 'Events', href: '/events', route: '/events' },
+    { name: 'Archive', href: '/archive', route: '/archive' },
+    { name: 'Timeline', href: '#timeline', route: '/' },
+    { name: 'Prizes', href: '#prizes', route: '/' },
+    { name: 'Register', href: '#register', route: '/' },
   ];
+
+  if (isAdmin) {
+    navLinks.splice(3, 0, { name: 'Organizer Hub', href: '/organizer', route: '/organizer' });
+  }
 
   // Scroll listener for sticky background & active section detection
   useEffect(() => {
@@ -53,17 +67,36 @@ const Navbar = ({ user, onOpenAuth, onOpenAdmin, onOpenUserDashboard, onOpenJudg
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleNavClick = (e, href) => {
+  const handleNavClick = (e, link) => {
     e.preventDefault();
     setMobileMenuOpen(false);
-    const targetId = href.substring(1);
-    const elem = document.getElementById(targetId);
-    if (elem) {
-      elem.scrollIntoView({ behavior: 'smooth' });
+    
+    if (typeof link === 'object') {
+      if (link.href.startsWith('/')) {
+        if (onNavigate) onNavigate(link.href);
+        return;
+      }
+      if (currentRoute !== '/' && onNavigate) {
+        onNavigate('/');
+        setTimeout(() => {
+          const elem = document.getElementById(link.href.substring(1));
+          if (elem) elem.scrollIntoView({ behavior: 'smooth' });
+        }, 100);
+        return;
+      }
+      const targetId = link.href.substring(1);
+      const elem = document.getElementById(targetId);
+      if (elem) elem.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      if (link.startsWith('/')) {
+        if (onNavigate) onNavigate(link);
+        return;
+      }
+      const targetId = link.substring(1);
+      const elem = document.getElementById(targetId);
+      if (elem) elem.scrollIntoView({ behavior: 'smooth' });
     }
   };
-
-  const isAdmin = user?.profile?.role === 'admin' || user?.profile?.role === 'organizer' || user?.user_metadata?.role === 'admin';
 
   return (
     <motion.header
@@ -94,12 +127,15 @@ const Navbar = ({ user, onOpenAuth, onOpenAdmin, onOpenUserDashboard, onOpenJudg
         {/* Desktop Navigation Links */}
         <nav className="hidden md:flex items-center gap-1 bg-[#0B1120]/60 backdrop-blur-md px-4 py-1.5 rounded-full border border-white/10 shadow-inner">
           {navLinks.map((link) => {
-            const isActive = activeSection === link.href.substring(1);
+            const isActive = link.href.startsWith('/')
+              ? currentRoute === link.route
+              : currentRoute === '/' && activeSection === link.href.substring(1);
+
             return (
               <a
                 key={link.name}
                 href={link.href}
-                onClick={(e) => handleNavClick(e, link.href)}
+                onClick={(e) => handleNavClick(e, link)}
                 className={`relative px-4 py-1.5 text-sm font-medium transition-all duration-300 rounded-full ${
                   isActive
                     ? 'text-cyan-400 font-semibold'
@@ -267,12 +303,14 @@ const Navbar = ({ user, onOpenAuth, onOpenAdmin, onOpenUserDashboard, onOpenJudg
           >
             <div className="px-6 py-6 flex flex-col gap-4">
               {navLinks.map((link) => {
-                const isActive = activeSection === link.href.substring(1);
+                const isActive = link.href.startsWith('/')
+                  ? currentRoute === link.route
+                  : currentRoute === '/' && activeSection === link.href.substring(1);
                 return (
                   <a
                     key={link.name}
                     href={link.href}
-                    onClick={(e) => handleNavClick(e, link.href)}
+                    onClick={(e) => handleNavClick(e, link)}
                     className={`px-4 py-3 rounded-xl text-base font-medium transition-all ${
                       isActive
                         ? 'bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 font-semibold'

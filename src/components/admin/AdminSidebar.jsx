@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layers, Users, Shield, MessageSquare, HelpCircle, Award, BarChart3, QrCode, Bell, FileText, Settings, Radio } from 'lucide-react';
+import { Layers, Users, Shield, MessageSquare, HelpCircle, Award, BarChart3, QrCode, Bell, FileText, Settings, Radio, Calendar } from 'lucide-react';
 
 /**
  * Cyber Admin Navigation Sidebar / Tab Bar - Production Ready
@@ -7,6 +7,7 @@ import { Layers, Users, Shield, MessageSquare, HelpCircle, Award, BarChart3, QrC
 const AdminSidebar = ({ activeTab, setActiveTab, counts = {} }) => {
   const tabs = [
     { id: 'overview', label: 'Overview & Charts', icon: BarChart3 },
+    { id: 'events_manager', label: 'Events & Templates', icon: Calendar },
     { id: 'live_ops', label: 'Live Event Controls', icon: Radio },
     { id: 'registrations', label: 'Registrations', icon: Layers, count: counts.registrations },
     { id: 'checkin', label: 'QR Check-In', icon: QrCode },

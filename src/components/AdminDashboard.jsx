@@ -27,6 +27,7 @@ import AnnouncementsManager from './admin/AnnouncementsManager';
 import AuditLogsViewer from './admin/AuditLogsViewer';
 import MaintenancePanel from './admin/MaintenancePanel';
 import EventControlPanel from './admin/EventControlPanel';
+import EventsManager from './admin/EventsManager';
 
 
 
@@ -159,6 +160,11 @@ const AdminDashboard = ({ isOpen, onClose }) => {
             {/* 1. OVERVIEW & ANALYTICS TAB */}
             {activeTab === 'overview' && (
               <AnalyticsCharts analytics={analytics} stats={stats} />
+            )}
+
+            {/* 1.25 MULTI-EVENT PLATFORM & TEMPLATES MANAGER */}
+            {activeTab === 'events_manager' && (
+              <EventsManager />
             )}
 
             {/* 1.5 LIVE EVENT MASTER CONTROLS TAB */}

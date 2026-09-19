@@ -2,7 +2,7 @@ import { supabase, isSupabaseConfigured } from '../lib/supabase';
 import { uploadService } from './upload';
 
 /**
- * Registration Service - Handles hackathon registrations and file uploads
+ * Registration Service - Handles event-specific hackathon registrations and file uploads
  */
 export const registrationService = {
   /**
@@ -20,22 +20,27 @@ export const registrationService = {
   },
 
   /**
-   * Create a new hackathon registration
+   * Create a new hackathon registration for a specific event
    */
   async createRegistration({
     userId,
     teamId,
+    eventId,
     innovationDomain,
     projectTitle,
     projectDescription,
     proposalFile,
     pptFile,
   }) {
+    const defaultEventId = 'a0000000-0000-0000-0000-000000000001';
+    const targetEventId = eventId || defaultEventId;
+
     if (!isSupabaseConfigured()) {
       return {
-        id: 'mock-reg-id',
+        id: `mock-reg-${Date.now()}`,
         user_id: userId,
         team_id: teamId,
+        event_id: targetEventId,
         innovation_domain: innovationDomain,
         project_title: projectTitle,
         project_description: projectDescription,
@@ -66,6 +71,7 @@ export const registrationService = {
         {
           user_id: userId || null,
           team_id: teamId || null,
+          event_id: targetEventId,
           innovation_domain: innovationDomain,
           project_title: projectTitle,
           project_description: projectDescription,
@@ -82,19 +88,43 @@ export const registrationService = {
   },
 
   /**
-   * Get registration for current user
+   * Get registration for current user (optional eventId parameter)
    */
-  async getUserRegistration(userId) {
+  async getUserRegistration(userId, eventId = null) {
     if (!isSupabaseConfigured() || !userId) return null;
-    const { data, error } = await supabase
+    let query = supabase
       .from('registrations')
-      .select('*, teams(*, team_members(*))')
-      .eq('user_id', userId)
-      .order('created_at', { ascending: false })
-      .maybeSingle();
+      .select('*, teams(*, team_members(*)), events(*)')
+      .eq('user_id', userId);
 
-    if (error) return null;
-    return data;
+    if (eventId) {
+      query = query.eq('event_id', eventId);
+    }
+
+    const { data, error } = await query.order('created_at', { ascending: false });
+
+    if (error || !data || data.length === 0) return null;
+    return data[0];
+  },
+
+  /**
+   * Get ALL registrations for a user across multiple events
+   */
+  async getAllUserRegistrations(userId) {
+    if (!isSupabaseConfigured() || !userId) return [];
+    try {
+      const { data, error } = await supabase
+        .from('registrations')
+        .select('*, teams(*, team_members(*)), events(*)')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false });
+
+      if (error || !data) return [];
+      return data;
+    } catch (err) {
+      console.warn('Error getting all registrations:', err);
+      return [];
+    }
   },
 
   /**
