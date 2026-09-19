@@ -112,7 +112,7 @@ const Navbar = ({
           : 'bg-transparent py-5 border-b border-white/5'
       }`}
     >
-      <div className="max-w-[1440px] mx-auto px-4 lg:px-6 flex items-center justify-between gap-2">
+      <div className="max-w-[1440px] mx-auto px-2 sm:px-4 lg:px-6 flex items-center justify-between gap-2 w-full">
         {/* Brand Logo */}
         <a 
           href="#hero" 
@@ -128,7 +128,7 @@ const Navbar = ({
         </a>
 
         {/* Desktop Navigation Links */}
-        <nav className="hidden lg:flex items-center gap-0.5 lg:gap-1 bg-[#0B1120]/70 backdrop-blur-md px-2.5 lg:px-3 py-1 rounded-full border border-white/10 shadow-inner">
+        <nav className="hidden lg:flex items-center gap-0.5 xl:gap-1 bg-[#0B1120]/70 backdrop-blur-md px-2 xl:px-3 py-1 rounded-full border border-white/10 shadow-inner overflow-x-auto no-scrollbar shrink min-w-0 max-w-[50vw] xl:max-w-[62vw]">
           {navLinks.map((link) => {
             const isActive = link.href.startsWith('/')
               ? currentRoute === link.route
@@ -139,7 +139,7 @@ const Navbar = ({
                 key={link.name}
                 href={link.href}
                 onClick={(e) => handleNavClick(e, link)}
-                className={`relative px-2.5 lg:px-3 py-1 text-xs lg:text-xs font-medium transition-all duration-300 rounded-full whitespace-nowrap ${
+                className={`relative px-2 xl:px-2.5 py-1 text-[11px] xl:text-xs font-medium transition-all duration-300 rounded-full whitespace-nowrap shrink-0 ${
                   isActive
                     ? 'text-cyan-400 font-semibold'
                     : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
