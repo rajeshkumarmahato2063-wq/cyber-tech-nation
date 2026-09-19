@@ -31,14 +31,16 @@ const Navbar = ({
   const navLinks = [
     { name: 'Home', href: '#hero', route: '/' },
     { name: 'Events', href: '/events', route: '/events' },
+    { name: 'Portfolios', href: '/profile/rajesh-mahato', route: '/profile' },
+    { name: 'AI Resume', href: '/resume-builder', route: '/resume-builder' },
+    { name: 'Recruiters', href: '/recruiter', route: '/recruiter' },
+    { name: 'Networking', href: '/networking', route: '/networking' },
+    { name: 'Leaderboard', href: '/leaderboard', route: '/leaderboard' },
     { name: 'Archive', href: '/archive', route: '/archive' },
-    { name: 'Timeline', href: '#timeline', route: '/' },
-    { name: 'Prizes', href: '#prizes', route: '/' },
-    { name: 'Register', href: '#register', route: '/' },
   ];
 
   if (isAdmin) {
-    navLinks.splice(3, 0, { name: 'Organizer Hub', href: '/organizer', route: '/organizer' });
+    navLinks.splice(2, 0, { name: 'Organizer Hub', href: '/organizer', route: '/organizer' });
   }
 
   // Scroll listener for sticky background & active section detection

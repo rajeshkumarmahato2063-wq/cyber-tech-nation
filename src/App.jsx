@@ -32,14 +32,19 @@ import LiveEventDashboard from './components/LiveEventDashboard';
 import MaintenanceBanner from './components/MaintenanceBanner';
 import EmergencyBroadcastBanner from './components/EmergencyBroadcastBanner';
 
-// Multi-Event Platform Pages
+// Multi-Event & Career Platform Pages
 import EventsPage from './pages/Events';
 import EventDetailsPage from './pages/EventDetails';
 import EventArchivePage from './pages/EventArchive';
 import OrganizerDashboardPage from './pages/Organizer';
+import PortfolioPage from './pages/Portfolio';
+import ResumeBuilderPage from './pages/ResumeBuilder';
+import RecruiterDashboardPage from './pages/Recruiter';
+import NetworkingHubPage from './pages/Networking';
+import LeaderboardPage from './pages/Leaderboard';
 
 /**
- * ZAYATHON Application Shell - Multi-Event Platform Ready
+ * ZAYATHON Application Shell - Hackathon & Career Platform Ready
  */
 function App() {
   const [initialLoading, setInitialLoading] = useState(true);
@@ -53,6 +58,7 @@ function App() {
   // Client-Side Routing State
   const [currentRoute, setCurrentRoute] = useState(window.location.pathname || '/');
   const [selectedRegisterEvent, setSelectedRegisterEvent] = useState(null);
+  const [chatTargetUserId, setChatTargetUserId] = useState(null);
 
   // Initialize Auth state via custom useAuth hook
   const { user, profile, isAuthenticated, isAdmin, signOut, refreshUser } = useAuth();
@@ -95,7 +101,16 @@ function App() {
     }, 150);
   };
 
+  const handleOpenChatWithUser = (targetUserId) => {
+    setChatTargetUserId(targetUserId);
+    handleNavigate('/networking');
+  };
+
   const isOrganizerOrAdmin = isAdmin || profile?.role === 'organizer' || user?.user_metadata?.role === 'organizer';
+
+  // Determine current profile username from route if viewing /profile/:username
+  const isProfileRoute = currentRoute.startsWith('/profile') || currentRoute.startsWith('/portfolio');
+  const profileUsername = isProfileRoute ? (currentRoute.split('/')[2] || 'rajesh-mahato') : 'rajesh-mahato';
 
   return (
     <>
@@ -123,7 +138,7 @@ function App() {
         {/* 5. Ambient Cyber Background Lighting & Orbs */}
         <BackgroundDecorations />
 
-        {/* 6. Sticky Navbar with Auth Controls, Multi-Event Routing & Theme Toggle */}
+        {/* 6. Sticky Navbar with Auth Controls, Career Platform Routing & Theme Toggle */}
         <Navbar
           user={user}
           onOpenAuth={handleOpenAuth}
@@ -155,6 +170,27 @@ function App() {
             <EventArchivePage />
           ) : currentRoute === '/organizer' ? (
             <OrganizerDashboardPage user={user} />
+          ) : isProfileRoute ? (
+            <PortfolioPage
+              username={profileUsername}
+              currentUser={user}
+              onOpenChat={handleOpenChatWithUser}
+            />
+          ) : currentRoute === '/resume-builder' ? (
+            <ResumeBuilderPage user={user} />
+          ) : currentRoute === '/recruiter' ? (
+            <RecruiterDashboardPage
+              onViewPortfolio={(uname) => handleNavigate(`/profile/${uname}`)}
+            />
+          ) : currentRoute === '/networking' ? (
+            <NetworkingHubPage
+              currentUser={user}
+              targetUserId={chatTargetUserId}
+            />
+          ) : currentRoute === '/leaderboard' ? (
+            <LeaderboardPage
+              onViewPortfolio={(uname) => handleNavigate(`/profile/${uname}`)}
+            />
           ) : (
             /* Default Flagship Home Page View */
             <>
