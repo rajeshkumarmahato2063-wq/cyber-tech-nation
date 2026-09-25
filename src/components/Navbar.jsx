@@ -33,6 +33,7 @@ const Navbar = ({
     { name: 'Events', href: '/events', route: '/events' },
     { name: 'Team Match', href: '/team-match', route: '/team-match' },
     { name: 'Mentors', href: '/mentors', route: '/mentors' },
+    { name: 'Jobs', href: '/jobs', route: '/jobs' },
     { name: 'Portfolios', href: '/profile/rajesh-mahato', route: '/profile' },
     { name: 'AI Resume', href: '/resume-builder', route: '/resume-builder' },
     { name: 'Recruiters', href: '/recruiter', route: '/recruiter' },

@@ -32,6 +32,14 @@ import BookingPage from './pages/Booking';
 import OfficeHoursPage from './pages/OfficeHours';
 import AIReviewPage from './pages/AIReview';
 
+// Company Hiring & Internship Hub Pages
+import JobsPage from './pages/Jobs';
+import JobDetailsPage from './pages/Jobs/JobDetails';
+import CompanyPage from './pages/Company';
+import ApplicationsPage from './pages/Applications';
+import RecruiterDashboardPage from './pages/Recruiter';
+import InterviewsPage from './pages/Interviews';
+
 /**
  * ZAYATHON Application Root Shell
  * Multi-Event SaaS & AI Career Platform
@@ -203,6 +211,40 @@ function App() {
       ) : route === '/ai-review' ? (
         <SectionErrorBoundary name="AIReviewPage">
           <AIReviewPage user={user} onNavigate={handleNavigate} />
+        </SectionErrorBoundary>
+      ) : route === '/jobs' ? (
+        <SectionErrorBoundary name="JobsPage">
+          <JobsPage user={user} onNavigate={handleNavigate} />
+        </SectionErrorBoundary>
+      ) : route.startsWith('/job/') ? (
+        <SectionErrorBoundary name="JobDetailsPage">
+          <JobDetailsPage
+            jobId={route.replace('/job/', '')}
+            user={user}
+            onNavigate={handleNavigate}
+            onBack={() => handleNavigate('/jobs')}
+          />
+        </SectionErrorBoundary>
+      ) : route.startsWith('/company/') ? (
+        <SectionErrorBoundary name="CompanyPage">
+          <CompanyPage
+            companyId={route.replace('/company/', '')}
+            user={user}
+            onNavigate={handleNavigate}
+            onBack={() => handleNavigate('/jobs')}
+          />
+        </SectionErrorBoundary>
+      ) : route === '/my-applications' ? (
+        <SectionErrorBoundary name="ApplicationsPage">
+          <ApplicationsPage user={user} onNavigate={handleNavigate} />
+        </SectionErrorBoundary>
+      ) : route === '/recruiter/dashboard' ? (
+        <SectionErrorBoundary name="RecruiterDashboardPage">
+          <RecruiterDashboardPage user={user} onNavigate={handleNavigate} />
+        </SectionErrorBoundary>
+      ) : route === '/interviews' ? (
+        <SectionErrorBoundary name="InterviewsPage">
+          <InterviewsPage user={user} onNavigate={handleNavigate} />
         </SectionErrorBoundary>
       ) : (
         /* Flagship Home Page Component */
