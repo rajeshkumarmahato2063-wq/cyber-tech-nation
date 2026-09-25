@@ -25,6 +25,13 @@ import NetworkingHubPage from './pages/Networking';
 import LeaderboardPage from './pages/Leaderboard';
 import TeamMatchPage from './pages/TeamMatch';
 
+// AI Mentor Hub Pages
+import MentorsPage from './pages/Mentors';
+import MentorDetailsPage from './pages/Mentors/MentorDetails';
+import BookingPage from './pages/Booking';
+import OfficeHoursPage from './pages/OfficeHours';
+import AIReviewPage from './pages/AIReview';
+
 /**
  * ZAYATHON Application Root Shell
  * Multi-Event SaaS & AI Career Platform
@@ -171,6 +178,31 @@ function App() {
       ) : route === '/team-match' ? (
         <SectionErrorBoundary name="TeamMatchPage">
           <TeamMatchPage />
+        </SectionErrorBoundary>
+      ) : route === '/mentors' ? (
+        <SectionErrorBoundary name="MentorsPage">
+          <MentorsPage user={user} onNavigate={handleNavigate} />
+        </SectionErrorBoundary>
+      ) : route.startsWith('/mentor/') ? (
+        <SectionErrorBoundary name="MentorDetailsPage">
+          <MentorDetailsPage
+            mentorId={route.replace('/mentor/', '')}
+            user={user}
+            onNavigate={handleNavigate}
+            onBack={() => handleNavigate('/mentors')}
+          />
+        </SectionErrorBoundary>
+      ) : route === '/book-session' ? (
+        <SectionErrorBoundary name="BookingPage">
+          <BookingPage user={user} onNavigate={handleNavigate} />
+        </SectionErrorBoundary>
+      ) : route === '/office-hours' ? (
+        <SectionErrorBoundary name="OfficeHoursPage">
+          <OfficeHoursPage user={user} onNavigate={handleNavigate} />
+        </SectionErrorBoundary>
+      ) : route === '/ai-review' ? (
+        <SectionErrorBoundary name="AIReviewPage">
+          <AIReviewPage user={user} onNavigate={handleNavigate} />
         </SectionErrorBoundary>
       ) : (
         /* Flagship Home Page Component */
